@@ -133,6 +133,11 @@ h1 .split-inner>span{color:#a8acae}
   .cursor{display:none}
 }
 
+/* --- brand mark: the real logo tile, not a letter --- */
+img.brandmark{display:block;padding:0;letter-spacing:normal;background:none;object-fit:contain;border-radius:9px;box-shadow:0 0 0 1px #ffffff38,0 6px 18px #00000066}
+footer img.brandmark{border-radius:7px;box-shadow:0 0 0 1px #ffffff1c}
+@media(max-width:760px){img.brandmark{width:30px;height:30px;border-radius:8px}}
+
 @media(prefers-reduced-motion:reduce){
   .ambient{display:none}
   .scroll-progress,.cursor,.scroll-cue,.scanline,.demo-autoplay{display:none}

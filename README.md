@@ -6,6 +6,16 @@ Open index.html with a static HTTP server. No dependencies or build step.
 
 Pre-launch: no payments, downloads or email collection. Launch CTA links to this repository. UI illustrations are labelled as concepts. App is a one-time license; optional Cloud is a separate subscription.
 
+## Brand assets
+
+The mark on the page is the same tile used as the Windows app icon (`belt.ico` in the app repository), not a typographic substitute:
+
+- `logo.png` — 256 px tile with transparent corners, used in the header, the footer, the launch card and as `og:image`;
+- `favicon.ico` — 16, 32, 48, 64, 128 and 256 px;
+- `apple-touch-icon.png` — 180 px.
+
+They are downscaled from the 1024 px master with Pillow/Lanczos. Regenerate them only when the logo changes.
+
 ## Motion layer
 
 The page stays a static HTML/CSS/JS document. On top of it, `app.js` adds:

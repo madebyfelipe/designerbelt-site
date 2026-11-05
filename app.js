@@ -203,7 +203,12 @@ showTool('finder');
     const spot = document.getElementById('spot');
     const cursor = document.getElementById('cursor');
     const hero = document.querySelector('.hero');
-    const glyphs = ['Aa', '⌕', '▦', 'Æ', '⇄', '◉', '#', '✳', '✦', '↗', '⌘', 'b.'];
+    const glyphs = ['Aa', '⌕', '▦', 'Æ', '⇄', '◉', '#', '✳', '✦', '↗', '⌘'];
+    /* The brand tile floats with the glyphs, loaded lazily and only drawn once decoded. */
+    const logo = new Image();
+    let logoReady = false;
+    logo.onload = () => { logoReady = true; };
+    logo.src = '/logo.png';
     const particles = [];
     let width = 0, height = 0, heroVisible = true, running = false;
 
@@ -211,13 +216,16 @@ showTool('finder');
       particles.length = 0;
       const count = clamp(Math.round((width * height) / 26000), 12, 44);
       for (let i = 0; i < count; i++) {
-        const glyph = Math.random() > 0.42;
+        const roll = Math.random();
+        const kind = roll < 0.12 ? 'logo' : roll < 0.58 ? 'glyph' : 'dot';
+        const glyph = kind === 'glyph';
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
           vx: (Math.random() - 0.5) * 0.22,
           vy: -0.06 - Math.random() * 0.2,
-          size: glyph ? 11 + Math.random() * 20 : 1.2 + Math.random() * 2.2,
+          kind,
+          size: kind === 'logo' ? 15 + Math.random() * 17 : glyph ? 11 + Math.random() * 20 : 1.2 + Math.random() * 2.2,
           glyph: glyph ? glyphs[(Math.random() * glyphs.length) | 0] : '',
           depth: 0.25 + Math.random() * 0.9,
           alpha: glyph ? 0.1 + Math.random() * 0.2 : 0.14 + Math.random() * 0.3,
@@ -271,7 +279,11 @@ showTool('finder');
         context.save();
         context.translate(x, y);
         context.rotate(p.rotation);
-        if (p.glyph) {
+        if (p.kind === 'logo' && logoReady) {
+          context.globalAlpha = Math.min(1, p.alpha + 0.12);
+          context.drawImage(logo, -p.size / 2, -p.size / 2, p.size, p.size);
+          context.globalAlpha = 1;
+        } else if (p.glyph) {
           context.font = '600 ' + p.size + 'px Inter, "Segoe UI", sans-serif';
           context.fillStyle = 'rgba(233,237,228,' + p.alpha + ')';
           context.fillText(p.glyph, 0, 0);
