@@ -25,9 +25,9 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
   if (slug === 'index') {
     if ((html.match(/<h1[ >]/g) || []).length !== 1) fail('index.html: needs exactly one h1');
     if (!/<main id="content">/.test(html) || /class="skip" href="#content"/.test(html) === false) fail('index.html: missing main/skip link');
-    // the home may load one local script (the mascot and the drag demo); nothing else, and nothing remote
+    // the home may load three local scripts (the mascot head, the drag section, the page glue); nothing else, and nothing remote
     const scripts = [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]);
-    const allowed = ['/mascot-head.js', '/drag-autoplay.js', '/home.js'];
+    const allowed = ['/mascot-head.js', '/drag-v3.js', '/home.js'];
     if (scripts.join(',') !== allowed.join(',')) fail(`index.html: scripts must be exactly ${allowed.join(', ')}, found ${scripts.join(', ') || 'none'}`);
     if (/<script(?![^>]*src=)/i.test(html)) fail('index.html: no inline scripts');
     const css = [...html.matchAll(/<link[^>]+href="([^"]+\.css)"/g)].map((m) => m[1]);
@@ -64,13 +64,18 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (!/class="db-head"/.test(html)) fail('index.html: the head mascot is not inlined');
     if (/dbm-belt|dbm-tail-pivot|dbm-body|dbm-head-look/.test(html)) fail('index.html: the mascot must be head only (v2)');
     if (!/dbh-eye/.test(html)) fail('index.html: the head mascot layers are missing');
-    if (!/data-asset/.test(html)) fail('index.html: the draggable asset is missing');
-    if (!/data-target/.test(html)) fail('index.html: the editor drop target is missing');
-    if (!/data-result/.test(html)) fail('index.html: the new layer row is missing');
-    if (!/brand-poster\.psd/.test(html)) fail('index.html: the editor document tab is missing');
+    // the drag section: the visitor's own drag needs the canvas, the three files and a way back
+    if (!/data-dv3/.test(html) || !/data-dv3-stage/.test(html)) fail('index.html: the drag section root is missing');
+    if (!/data-canvas/.test(html)) fail('index.html: the canvas is missing');
+    if ((html.match(/class="lb-card"/g) || []).length !== 3) fail('index.html: expected three draggable PNGs in the Library');
+    if (!/data-layer="logo"/.test(html) || !/data-layer="photo"/.test(html) || !/data-layer="badge"/.test(html)) fail('index.html: the Layers panel lost its rows');
+    if (!/role="status"/.test(html) || !/data-status/.test(html)) fail('index.html: the live status is missing');
+    if (!/data-reset/.test(html) || !/Start over/.test(html)) fail('index.html: "Start over" is missing');
+    if (!/acme-poster\.psd/.test(html)) fail('index.html: the editor document tab is missing');
     if (!/class="ed-layers"/.test(html)) fail('index.html: the Layers panel is missing');
-    if (/adobe|photoshop|ps/i.test(html)) fail('index.html: no Adobe/Photoshop name or mark may appear');
-    if (!/id="drag"/.test(html) || !/data-asset/.test(html)) fail('index.html: the drag demo is missing');
+    if (!/data-lib-client/.test(html) || !/data-lib-title/.test(html)) fail('index.html: the Library client switcher is missing');
+    if (/adobe|photoshop|\bps\b/i.test(html)) fail('index.html: no Adobe/Photoshop name or mark may appear');
+    if (!/id="drag"/.test(html)) fail('index.html: the drag demo is missing');
     if (!/data-clients/.test(html)) fail('index.html: the client library is missing');
     if (/Coming soon/.test(text) === false) fail('index.html: OpticAlign/FixedLink must be marked coming soon');
   }

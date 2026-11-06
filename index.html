@@ -16,8 +16,9 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/home.css">
   <link rel="stylesheet" href="/mascot.css">
+  <link rel="stylesheet" href="/drag-v3.css">
   <script src="/mascot-head.js" defer></script>
-  <script src="/drag-autoplay.js" defer></script>
+  <script src="/drag-v3.js" defer></script>
   <script src="/home.js" defer></script>
 </head>
 <body>
@@ -83,104 +84,94 @@
     </div>
   </section>
 
-  <!-- 2. Drag: a demo the visitor can actually use, with mouse, touch or the keyboard. -->
-  <section class="section" id="drag">
-    <div class="wrap">
-      <h2>Drag it out of the Library. Drop it into your design.</h2>
-      <p class="lead narrow">Open a client, grab a file and carry it straight into your editor. It lands as a new layer.</p>
+<!-- 2. Drag: the Library beside an image editor. The visitor can really drag a PNG in. Needs /drag-v3.css and /drag-v3.js. -->
+<section class="section" id="drag">
+  <div class="wrap">
+    <h2>Grab an asset. Drop it where you work.</h2>
+    <p class="lead narrow">Your client's logo, photos and badges sit in the Library. Drag a PNG straight onto your canvas. No export dialogs, no hunting through folders.</p>
 
-      <div class="demo" data-stage="rest">
-        <div class="ws">
-          <!-- Library: a window of its own, beside the editor -->
-          <div class="win lib-win">
-            <div class="win-bar"><span class="win-dots" aria-hidden="true">● ● ●</span> Library</div>
-            <div class="lib-body">
-              <div class="lib-clients" role="group" aria-label="Choose a client">
-                <button class="lib-avatar" type="button" data-lib-client="acme" style="--who:#2D8CFF" aria-pressed="true">AD</button>
-                <button class="lib-avatar" type="button" data-lib-client="lorem" style="--who:#3DD68C" aria-pressed="false">LC</button>
-                <button class="lib-avatar" type="button" data-lib-client="example" style="--who:#8B5CF6" aria-pressed="false">EB</button>
-                <button class="lib-avatar" type="button" data-lib-client="sample" style="--who:#F472B6" aria-pressed="false">SS</button>
-              </div>
-              <p class="lib-head"><span data-lib-title>Acme Demo</span><span class="lib-count" data-lib-count>24 assets</span></p>
-              <div class="tabs" role="group" aria-label="Filter the library">
-                <button class="tab" type="button" data-lib-filter="all" aria-pressed="true">All</button>
-                <button class="tab" type="button" data-lib-filter="colors" aria-pressed="false">Colors</button>
-                <button class="tab" type="button" data-lib-filter="fonts" aria-pressed="false">Fonts</button>
-                <button class="tab" type="button" data-lib-filter="png" aria-pressed="false">PNG</button>
-              </div>
-              <div class="lib-pane" data-lib-pane="assets">
-              <div class="lib-grid" data-lib-grid>
-                <button class="asset asset-live" type="button" data-asset="logo-primary.png" aria-describedby="drag-help">
-                  <span class="asset-thumb" style="--thumb:#0B0C0C" aria-hidden="true"></span>
-                  <span class="asset-name">logo-primary.png</span>
-                </button>
-                <div class="asset asset-static" aria-hidden="true"><span class="asset-thumb" style="--thumb:#2D8CFF"></span><span class="asset-name">symbol.png</span></div>
-                <div class="asset asset-static" aria-hidden="true"><span class="asset-thumb" style="--thumb:#FFC400"></span><span class="asset-name">badge.png</span></div>
-                <div class="asset asset-static" aria-hidden="true"><span class="asset-thumb" style="--thumb:#4A4A4A"></span><span class="asset-name">pattern.png</span></div>
-              </div>
-              </div>
-              <div class="lib-pane" data-lib-pane="colors" hidden>
-                <p class="lib-pane-label">Colors</p>
-                <div class="lib-chips" data-lib-colors></div>
-              </div>
-              <div class="lib-pane" data-lib-pane="fonts" hidden>
-                <p class="lib-pane-label">Typography</p>
-                <div class="lib-fonts" data-lib-fonts></div>
-              </div>
-              <p class="panel-hint" id="drag-help">Drag the file, press Enter on it, or use the button below the editor.</p>
-            </div>
+    <div class="dv3" data-dv3 data-dv3-stage="rest" data-client="acme">
+      <!-- The image editor (generic recreation; no real app UI) -->
+      <div class="ed" aria-hidden="true">
+        <div class="ed-menu"><span class="ed-glyph"></span><span>File</span><span>Edit</span><span>Image</span><span>Layer</span><span>Type</span><span>Select</span><span>Filter</span><span>View</span><span>Window</span></div>
+        <div class="ed-opts">
+          <span class="ed-opt-tool"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></svg></span>
+          <span class="ed-mode-move">Auto-Select: <b>Layer</b><i class="ed-chk"></i> Show Transform Controls</span>
+          <span class="ed-mode-tf">W: <b data-w>100.0%</b><span class="ed-link"></span>H: <b data-h>100.0%</b><span class="ed-tf-extra"><span class="ed-sep"></span>∠ <b>0.00°</b><span class="ed-sep"></span>Interpolation: <b>Bicubic</b></span></span>
+          <span class="ed-commit-wrap"><span class="ed-cancel" title="Cancel">⊘</span><span class="ed-commit" data-commit title="Commit">✓</span></span>
+        </div>
+        <div class="ed-body">
+          <div class="ed-tools">
+            <svg viewBox="0 0 24 24" class="on"><path d="M5 3l12 8-5 1-2 6z"/></svg>
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="3 2.5"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M6 14c-2-4 2-10 8-9 5 1 6 6 2 8-3 1-6 0-7 2-1 1 0 4 2 5"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M7 2v15h15M2 7h15v15"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M19 5a2 2 0 0 0-3 0l-2 2 3 3 2-2a2 2 0 0 0 0-3zM13 8l-8 8v3h3l8-8"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M14 4l6 6-9 9H5v-6z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 3l2 6 6 1-6 2-2 9-2-9-6-2 6-1z"/></svg>
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l5 5"/></svg>
+            <span class="ed-fgbg"><i class="fg"></i><i class="bg"></i></span>
           </div>
-
-          <!-- Editor: generic raster editor, no brand marks -->
-          <div class="win ed-win" data-target>
-            <div class="ed-tabs"><span class="ed-tab">brand-poster.psd @ 50% <span class="ed-tab-meta">(RGB/8)</span></span></div>
-            <div class="ed-menu" aria-hidden="true"><span>File</span><span>Edit</span><span>Image</span><span>Layer</span><span>Type</span><span>Select</span><span>Filter</span><span>View</span><span>Window</span><span>Help</span></div>
-            <div class="ed-options" aria-hidden="true"><span class="ed-move">↖</span><span>Auto-Select: Layer</span><span class="ed-sep"></span><span>Show Transform Controls</span></div>
-            <div class="ed-body">
-              <div class="ed-tools" aria-hidden="true"><span>↖</span><span>▭</span><span>⌗</span><span>✎</span><span>◐</span><span>⌫</span><span>T</span><span>◻</span><span>↔</span><span>⌕</span></div>
-              <div class="ed-canvas target-body">
-                <div class="artboard">
-                  <div class="art-chip"><span class="art-mark">A</span><span class="art-transform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
-                  <p class="art-title">Summer<br>Sale</p>
-                  <p class="art-sub">Up to 40% off</p>
-                  <div class="art-band">acme.example</div>
+          <div class="ed-doc">
+            <div class="ed-tab"><span>acme-poster.psd @ 66.7% (Layer, RGB/8)</span><span class="ed-x">×</span></div>
+            <div class="ed-board">
+              <div class="pc" data-canvas>
+                <div class="pc-photo" data-photo-slot>
+                  <span class="pc-photo-ph"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-5 4 4 3-3 6 6"/></svg></span>
+                  <div class="pc-photo-img" data-photo></div>
                 </div>
-              </div>
-              <div class="ed-layers">
-                <p class="layers-head">Layers</p>
-                <p class="layers-blend" aria-hidden="true">Normal <span>Opacity: 100%</span></p>
-                <ul class="layers">
-                  <li class="layer layer-new" data-result hidden>
-                    <span class="layer-eye" aria-hidden="true">◉</span>
-                    <span class="asset-thumb" style="--thumb:#0B0C0C" aria-hidden="true"></span>
-                    <span class="layer-name target-done">logo-primary</span>
-                    <span class="check" aria-hidden="true">✓</span>
-                  </li>
-                  <li class="layer"><span class="layer-eye" aria-hidden="true">◉</span><span class="layer-type">T</span><span class="layer-name">Headline</span></li>
-                  <li class="layer"><span class="layer-eye" aria-hidden="true">◉</span><span class="asset-thumb thumb-poster" aria-hidden="true"></span><span class="layer-name">Background</span><span class="layer-lock" aria-hidden="true">🔒</span></li>
-                </ul>
+                <div class="pc-head"><span>Spring</span><span>drop.</span></div>
+                <p class="pc-sub">New season · 2026</p>
+                <div class="pc-logo-slot" data-logo-slot></div>
+                <div class="pc-badge-slot" data-badge-slot></div>
+                <div class="pc-placed pc-logo" data-placed="logo"><span class="art art-logo"></span><span class="tf"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br" data-handle></i><i class="h tm"></i><i class="h bm"></i><i class="h ml"></i><i class="h mr"></i></span></div>
+                <div class="pc-placed pc-badge" data-placed="badge"><span class="art art-badge"></span><span class="tf"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i></span></div>
+                <div class="pc-target"></div>
               </div>
             </div>
+            <div class="ed-status"><span>66.67%</span><span>1080 px × 1350 px (72 ppi)</span></div>
+          </div>
+          <div class="ed-panels">
+            <div class="ed-ptabs"><b>Layers</b><span>Channels</span><span>Paths</span></div>
+            <div class="ed-popts"><span class="ed-sel">Normal</span><span>Opacity: <b>100%</b></span></div>
+            <ul class="ed-layers" data-layers>
+              <li class="ly" data-layer="badge"><i class="eye"></i><span class="lth"><span class="art art-badge"></span></span><span class="ly-name">badge</span></li>
+              <li class="ly" data-layer="logo"><i class="eye"></i><span class="lth"><span class="art art-logo"></span></span><span class="ly-name">logo-primary</span></li>
+              <li class="ly" data-layer="photo"><i class="eye"></i><span class="lth"><span class="art art-photo"></span></span><span class="ly-name">photo-hero</span></li>
+              <li class="ly ly-base"><i class="eye"></i><span class="lth lth-t">T</span>Spring drop.</li>
+              <li class="ly ly-base"><i class="eye"></i><span class="lth lth-photo-ph"></span>Photo frame</li>
+              <li class="ly ly-base"><i class="eye"></i><span class="lth lth-bg"></span>Background <span class="lock">🔒︎</span></li>
+            </ul>
           </div>
         </div>
-
-        <div class="demo-foot">
-          <p class="demo-status" role="status" aria-live="polite" data-status>Ready. The file is waiting in the Library.</p>
-          <div class="demo-actions only-js">
-            <button class="btn small ghost" type="button" data-add>Add the file without dragging</button>
-            <button class="btn small ghost" type="button" data-reset hidden>Start over</button>
-          </div>
-        </div>
-
-        <ul class="legend">
-          <li data-for="rest"><strong>Rest</strong><span>The cursor waits below the Library.</span></li>
-          <li data-for="drag"><strong>Carry</strong><span>The file follows the cursor in an arc; the editor lights up.</span></li>
-          <li data-for="drop"><strong>Drop</strong><span>It lands as a new layer, selected, with a transform box.</span></li>
-        </ul>
-        <p class="note">Editor UI is a generic raster editor mockup. Client and file names are examples.</p>
       </div>
+
+      <!-- The Designer's Belt Library widget (recreation of the app window) -->
+      <div class="lb">
+        <div class="lb-avs" role="group" aria-label="Choose a client"><button class="lb-av" type="button" data-lib-client="acme" style="--who:#2D8CFF" aria-pressed="true" title="Acme Demo">AD</button><button class="lb-av" type="button" data-lib-client="lorem" style="--who:#3DD68C" aria-pressed="false" title="Lorem Coffee">LC</button><button class="lb-av" type="button" data-lib-client="example" style="--who:#8B5CF6" aria-pressed="false" title="Example Bank">EB</button><button class="lb-av" type="button" data-lib-client="sample" style="--who:#F472B6" aria-pressed="false" title="Sample Studio">SS</button></div>
+        <div class="lb-top"><span class="lb-name" data-lib-title>Acme Demo</span><span class="lb-count" data-lib-count>24 assets</span></div>
+        <div class="lb-tabs" aria-hidden="true"><span>All</span><span>Colors</span><span>Fonts</span><span class="on">PNG</span></div>
+        <p class="lb-label">PNG graphics</p>
+        <div class="lb-grid">
+          <button class="lb-card" type="button" data-asset="logo" aria-describedby="drag-help"><span class="lb-th"><span class="art art-logo"></span></span><span class="lb-fn">logo-primary.png</span></button>
+          <button class="lb-card" type="button" data-asset="photo" aria-describedby="drag-help"><span class="lb-th"><span class="art art-photo"></span></span><span class="lb-fn">photo-hero.png</span></button>
+          <button class="lb-card" type="button" data-asset="badge" aria-describedby="drag-help"><span class="lb-th"><span class="art art-badge"></span></span><span class="lb-fn">badge.png</span></button>
+        </div>
+        <p class="lb-hint" id="drag-help">Drag a PNG onto the canvas, or focus one and press Enter.</p>
+      </div>
+
+      <div class="dv3-cursor" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 2.5 L3 19.5 L7.4 15.4 L10.4 22 L13.6 20.6 L10.6 14.1 L16.6 14.1 Z" fill="#F3F2EF" stroke="#0B0C0C" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="dv3-badge">+</span></div>
+      <div class="dv3-ghost" aria-hidden="true"><span class="art"></span></div>
     </div>
-  </section>
+
+    <div class="dv3-foot">
+      <p class="dv3-status" role="status" aria-live="polite" data-status>Three PNGs are waiting in the Library.</p>
+      <button class="btn small ghost" type="button" data-reset hidden>Start over</button>
+    </div>
+    <p class="dv3-note">The editor and the files are illustrations, not a capture of a real app.</p>
+  </div>
+</section>
 
   <!-- 3. Clients: one library per client, switched by list or tabs. -->
   <section class="section" id="clients">
