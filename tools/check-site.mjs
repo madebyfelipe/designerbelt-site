@@ -31,9 +31,10 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (!allowDrafts && /\[\[[A-Z_]+\]\]/.test(html)) fail(`${file}: unresolved marker ${html.match(/\[\[[A-Z_]+\]\]/)[0]} (publish gate)`);
   }
   // no third-party resources: only same-origin assets, mailto, and the repo link already on the landing
+  if (/github\.com/i.test(html)) fail(`${file}: links to GitHub, which must not appear on the site`);
   for (const m of html.matchAll(/\s(?:src|href)="([^"]+)"/g)) {
     const u = m[1];
-    if (u.startsWith('mailto:') || u.startsWith('#') || u === 'https://github.com/madebyfelipe/designerbelt-site') continue;
+    if (u.startsWith('mailto:') || u.startsWith('#')) continue;
     if (/^https?:/.test(u) && !/^https:\/\/designerbelt-site\.vercel\.app\//.test(u)) fail(`${file}: external reference ${u}`);
     if (u.startsWith('/')) {
       const [path, hash] = u.split('#');
