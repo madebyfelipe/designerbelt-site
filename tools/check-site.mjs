@@ -110,7 +110,8 @@ if ([...glue.matchAll(/https?:\/\/[^'"`\s)]+/g)].some((m) => !m[0].startsWith('h
 if (/(live|test)_[a-z0-9]{20,}/i.test(glue)) fail('checkout.js: a Paddle token is hardcoded; it must come from /api/checkout-config');
 for (const f of ['api/activate.mjs', 'api/deactivate.mjs', 'api/license.mjs', 'api/paddle-webhook.mjs', 'api/checkout-config.mjs', 'api/_lib/core.mjs', 'api/_lib/store.mjs', 'api/_lib/ctx.mjs']) if (!existsSync(join(root, f))) fail(`${f} is missing`);
 const ignore = read('.vercelignore');
-for (const d of ['tools', 'tests']) if (!new RegExp(`^${d}[ ]*$`, 'm').test(ignore)) fail(`.vercelignore must exclude ${d}`);
+const ignored = ignore.split(String.fromCharCode(10)).map((l) => l.trim());
+for (const d of ['tools', 'tests']) if (!ignored.includes(d)) fail(`.vercelignore must exclude ${d}`);
 // no secrets in the repo: webhook secrets, API keys, private keys
 for (const f of ['checkout.js', 'pricing.html', 'success.html', 'README.md', ...['activate', 'deactivate', 'license', 'paddle-webhook', 'checkout-config'].map((n) => `api/${n}.mjs`), 'api/_lib/core.mjs', 'api/_lib/store.mjs', 'api/_lib/ctx.mjs', 'vercel.json', 'package.json']) {
   const t = read(f);
