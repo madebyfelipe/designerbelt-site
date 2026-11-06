@@ -178,6 +178,74 @@
 
     if (addButton) addButton.addEventListener('click', addWithoutDrag);
     if (reset) reset.addEventListener('click', resetDemo);
+
+    // A demonstration cursor performs the gesture on its own, so the section is busy
+    // before anyone touches it. The first real interaction stops it for good.
+    var cursor = demo.querySelector('[data-cursor]');
+    var autoToken = 0, autoStopped = false;
+    var wait = function (ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); };
+
+    function pointIn(el) {
+      var box = demo.getBoundingClientRect(), rect = el.getBoundingClientRect();
+      return { x: rect.left - box.left + rect.width / 2, y: rect.top - box.top + rect.height / 2 };
+    }
+    function placeCursor(x, y, instant) {
+      if (!cursor) return;
+      cursor.style.transition = instant ? 'opacity .18s linear' : '';
+      cursor.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    }
+    function stopAuto() {
+      if (autoStopped) return;
+      autoStopped = true;
+      autoToken++;
+      if (cursor) cursor.classList.remove('is-live');
+      if (live) live.classList.remove('is-grabbed');
+    }
+    function scheduleAuto(ms) {
+      if (autoStopped) return;
+      setTimeout(runAuto, ms);
+    }
+    function onScreen() {
+      var rect = demo.getBoundingClientRect();
+      return rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.1;
+    }
+
+    async function runAuto() {
+      if (autoStopped) return;
+      if (reducedMotion.matches || document.hidden || !onScreen() || !cursor || !live || !target) {
+        scheduleAuto(2600);
+        return;
+      }
+      var token = ++autoToken;
+      try {
+        var from = pointIn(live), to = pointIn(target);
+        placeCursor(from.x + 52, from.y + 38, true);
+        cursor.classList.add('is-live');
+        await wait(520); if (token !== autoToken) return;
+        live.classList.add('is-grabbed');
+        mascot.setState('dragging');
+        stage('drag', 'Carrying the file to the canvas.');
+        placeCursor(from.x - 2, from.y - 3);
+        await wait(380); if (token !== autoToken) return;
+        placeCursor(to.x - 6, to.y - 4);
+        await wait(1150); if (token !== autoToken) return;
+        live.classList.remove('is-grabbed');
+        dropped();
+        await wait(1750); if (token !== autoToken) return;
+        cursor.classList.remove('is-live');
+        resetDemo();
+      } catch (error) {
+        if (cursor) cursor.classList.remove('is-live');
+        if (live) live.classList.remove('is-grabbed');
+      }
+      scheduleAuto(1600);
+    }
+
+    // Any real interaction wins over the demonstration.
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (type) {
+      demo.addEventListener(type, stopAuto, { passive: true });
+    });
+    scheduleAuto(700);
   }
 
   // ---------------------------------------------------------------- client library

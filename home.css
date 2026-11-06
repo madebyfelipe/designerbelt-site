@@ -11,6 +11,8 @@ a:focus-visible,button:focus-visible{outline:2px solid #ff8c55;outline-offset:5p
 .skip:focus{top:12px}
 .wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 4.5%}
 .only-js{display:none!important}
+/* the hidden attribute must win over the .only-js display rule */
+[hidden]{display:none!important}
 html.js .only-js{display:inline-flex!important}
 
 /* header */
@@ -39,7 +41,7 @@ h1{font-size:clamp(42px,6.2vw,82px);line-height:1.02;letter-spacing:-.05em;font-
 .hero-copy .lead{margin-top:24px;max-width:32ch;font-size:clamp(16px,1.5vw,19px);line-height:1.65;color:#b6bab8}
 .meta{margin-top:20px;font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:#7f8783}
 .hero-mascot{position:relative;display:flex;flex-direction:column;align-items:center}
-.hero-mascot .db-mascot{width:min(100%,540px);height:auto;overflow:visible}
+.hero-mascot .db-mascot{width:min(100%,460px);height:auto;overflow:visible}
 .mascot-note{margin-top:6px;font-size:12px;letter-spacing:.06em;color:#6f7773}
 
 /* sections */
@@ -141,7 +143,7 @@ h2{font-size:clamp(28px,3.6vw,46px);line-height:1.08;letter-spacing:-.035em;font
 @media(max-width:900px){
   .hero-grid,.clients,.pricing-grid{grid-template-columns:1fr}
   .hero-mascot{order:-1}
-  .hero-mascot .db-mascot{width:min(100%,380px)}
+  .hero-mascot .db-mascot{width:min(100%,320px)}
   .demo-grid{grid-template-columns:1fr}
   .tools{grid-template-columns:repeat(2,minmax(0,1fr))}
   h2{max-width:none}
@@ -175,3 +177,13 @@ h2{font-size:clamp(28px,3.6vw,46px);line-height:1.08;letter-spacing:-.035em;font
 .questions p{margin-top:8px;font-size:13px;line-height:1.7;color:#9aa29d}
 .questions p a{color:#e4e8e4;text-decoration:underline;text-decoration-color:#fb754199;text-underline-offset:3px}
 @media(max-width:900px){.faq-grid{grid-template-columns:1fr}}
+
+/* the demo's own cursor: it shows the gesture when nobody is touching the page */
+.demo{position:relative}
+.demo-cursor{position:absolute;left:0;top:0;width:20px;height:20px;pointer-events:none;opacity:0;z-index:6;
+  transition:transform 1.05s cubic-bezier(.35,.05,.2,1),opacity .18s linear;will-change:transform}
+.demo-cursor::before{content:"";position:absolute;inset:0;background:#f3f2ef;border-radius:2px;
+  clip-path:polygon(0 0,0 74%,26% 57%,45% 97%,62% 88%,43% 48%,76% 44%);
+  filter:drop-shadow(0 3px 6px #000000a6)}
+.demo-cursor.is-live{opacity:1}
+.asset-live.is-grabbed{opacity:.5;border-color:#ffffff2e;background:#222626}

@@ -61,6 +61,9 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (/href="https?:\/\/[^"]*(paddle|checkout)/i.test(html) || /<a[^>]*>\s*Buy/i.test(text)) fail('index.html: checkout link exists but checkout does not');
     if (!/Not on sale yet/.test(text)) fail('index.html: the disabled license button is missing');
     if (!/class="db-mascot"/.test(html)) fail('index.html: the mascot is not inlined');
+    if (/dbm-belt|dbm-tail-pivot|dbm-body/.test(html)) fail('index.html: the mascot must be head only');
+    if (!/dbm-head/.test(html)) fail('index.html: the mascot head is missing');
+    if (!/data-cursor/.test(html)) fail('index.html: the demo cursor is missing');
     if (!/id="drag"/.test(html) || !/data-asset/.test(html)) fail('index.html: the drag demo is missing');
     if (!/data-clients/.test(html)) fail('index.html: the client library is missing');
     if (/Coming soon/.test(text) === false) fail('index.html: OpticAlign/FixedLink must be marked coming soon');

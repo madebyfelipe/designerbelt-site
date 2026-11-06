@@ -8,9 +8,9 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
 html = (root / "index.html").read_text(encoding="utf-8")
-svg = (root / "mascot.svg").read_text(encoding="utf-8").strip()
+svg = (root / "mascot-head.svg").read_text(encoding="utf-8").strip()
 start, end = "<!-- mascot:start -->", "<!-- mascot:end -->"
 before, rest = html.split(start, 1)
 _, after = rest.split(end, 1)
 (root / "index.html").write_text(before + start + "\n" + svg + "\n" + end + after, encoding="utf-8", newline="\n")
-print("inlined mascot.svg:", len(svg), "bytes")
+print("inlined mascot-head.svg:", len(svg), "bytes")
