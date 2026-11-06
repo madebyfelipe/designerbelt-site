@@ -30,3 +30,9 @@ The page stays a static HTML/CSS/JS document. On top of it, `app.js` adds:
 Rules kept: no dependencies, no build step, `prefers-reduced-motion: reduce` disables the whole layer (the page renders exactly as the static HTML), content is never hidden without JavaScript, and the split headings keep their text for screen readers in a `.sr-only` element.
 
 Deployment: Vercel static hosting, repository root.
+
+## Pricing and legal pages
+
+`/pricing`, `/terms`, `/privacy` and `/refunds` are static pages (`pricing.html`, `terms.html`, `privacy.html`, `refunds.html`) that share `pages.css` and do not load `style.css` or `app.js`. They follow the UI designer's drawings (`Shared/design/site-legal`), with the claims that are not decided or not built yet removed: no checkout (the license button is disabled), no cancel-anytime or update-policy promise, no reply-time promise, no Cloud price.
+
+The legal copy is a draft pending the owner's approval. Three values are still open and appear as markers: `[[REFUND_DAYS]]`, `[[CONTACT_EMAIL]]` (and the *Last updated* date must be set when the text is approved). `node tools/check-site.mjs` fails while a marker remains, so an unapproved draft cannot be published by mistake; use `--allow-drafts` while working. After approval, replace the markers, update the date, run the check without flags, then deploy.

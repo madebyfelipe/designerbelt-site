@@ -148,3 +148,7 @@ footer img.brandmark{border-radius:7px;box-shadow:0 0 0 1px #ffffff1c}
   .closing h2{text-shadow:none!important}
   .marquee-track{transform:none!important}
 }
+
+/* --- legal links in the landing footer --- */
+.legal-links{display:flex;gap:18px;flex-wrap:wrap}
+.legal-links a:hover{color:#f3f2ef}
