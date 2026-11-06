@@ -46,7 +46,7 @@ Backend (Vercel Functions in `api/`, no dependencies, Web `Request`/`Response` h
 | Endpoint | Purpose |
 |---|---|
 | `POST /api/paddle-webhook` | Verifies `Paddle-Signature` (HMAC-SHA256 over `ts:rawBody`, 5 min tolerance). `transaction.completed` for our price creates one key per transaction (idempotent). An approved full refund or any approved chargeback (`adjustment.created/updated`) revokes it. |
-| `GET /api/license?txn=` | Success page: `202 pending` until the webhook arrives, then the key (shown for 7 days). |
+| `GET /api/license?txn=` | Success page: requires the browser claim in Authorization; `202 pending` until the webhook arrives, then the key (shown for 7 days). |
 | `POST /api/activate` | `{key, machine, label}`. Up to 3 devices; the same machine again is free and returns a fresh receipt. The 4th gets `409 limit_reached` with the list of devices. Receipt = ECDSA P-256 signature over a small JSON (`product`, key id, activation, machine, issued, limit). |
 | `POST /api/deactivate` | `{key, activation}` frees a slot (also for a lost PC). |
 | `GET /api/checkout-config` | `{enabled, environment, token, priceId}` for the page. |
@@ -55,7 +55,7 @@ Keys are `DBELT-XXXXX-XXXXX-XXXXX-XXXXX` (Crockford base32, 100 bits). Storage i
 
 Environment variables (Vercel; never in the repo): `CHECKOUT_ENABLED`, `PADDLE_ENV` (`sandbox` or `production`), `PADDLE_CLIENT_TOKEN` (public by design), `PADDLE_WEBHOOK_SECRET`, `LICENSE_SIGNING_KEY` (PKCS#8 PEM of the P-256 private key; the app embeds the public key), optional `PADDLE_PRICE_IDS` (default: the US$ 5 price) and `DOWNLOAD_URL` (shown on the success page; without it the page says the installer is not available).
 
-Checks: `npm test` (14 tests: signature, idempotent key creation, refund revocation, 3-device limit incl. a concurrent burst, receipt signature, flag logic), `npm run check` (static gate, also fails if checkout leaks into the HTML or a secret is committed), `npm run check:checkout` (real browser, real handlers, stubbed Paddle.js: flag off stays off, flag on sells, webhook to key to success page to 3 devices to refund). Paddle's own checkout is **not** exercised by any of them: that needs the Paddle sandbox.
+Checks: `npm test` (20 tests: signature, idempotent key creation, refund revocation, 3-device limit incl. a concurrent burst, receipt signature, flag logic), `npm run check` (static gate, also fails if checkout leaks into the HTML or a secret is committed), `npm run check:checkout` (real browser, real handlers, stubbed Paddle.js: flag off stays off, flag on sells, webhook to key to success page to 3 devices to refund). Paddle's own checkout is **not** exercised by any of them: that needs the Paddle sandbox.
 
 
 ## Paddle hardening (unpublished branch paddle-safe)
