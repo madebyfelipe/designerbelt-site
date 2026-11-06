@@ -59,7 +59,7 @@
         var span = document.createElement('span');
         span.className = 'swatch';
         span.style.setProperty('--c', hex);
-        span.title = hex;
+        span.title = hex; span.setAttribute('data-hex', hex);
         sectionSwatches.appendChild(span);
       });
     }
