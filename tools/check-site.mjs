@@ -41,6 +41,8 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (/<script/i.test(html)) fail(`${file}: pages must not load scripts`);
     if (!allowDrafts && /\[\[[A-Z_]+\]\]/.test(html)) fail(`${file}: unresolved marker ${html.match(/\[\[[A-Z_]+\]\]/)[0]} (publish gate)`);
   }
+  // claims that the app does not back: the Color Picker has HEX, RGB and HSL only
+  if (/oklch/i.test(html)) fail(`${file}: mentions OKLCH, which the Color Picker does not support`);
   // no third-party resources: only same-origin assets, mailto, and the repo link already on the landing
   if (/github\.com/i.test(html)) fail(`${file}: links to GitHub, which must not appear on the site`);
   for (const m of html.matchAll(/\s(?:src|href)="([^"]+)"/g)) {
