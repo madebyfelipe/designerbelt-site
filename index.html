@@ -4,182 +4,332 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#080909">
-  <title>Designer's Belt — One shortcut away.</title>
-  <meta name="description" content="A toolbelt for designers on Windows. Find fonts, search assets, pick colors and convert images. Offline. Coming soon.">
+  <title>Designer's Belt — The utility belt for designers.</title>
+  <meta name="description" content="A utility belt of tools for designers on Windows: find fonts, search assets, keep every client in its own library, pick colors and convert images. $5, one time, up to 3 devices.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Designer's Belt — One shortcut away.">
-  <meta property="og:description" content="A toolbelt for designers on Windows. Find fonts, search assets, pick colors and convert images. Offline. Coming soon.">
+  <meta property="og:title" content="Designer's Belt — The utility belt for designers.">
+  <meta property="og:description" content="Fonts, colors, clients and conversions on one belt. For Windows. $5, one time, up to 3 devices.">
   <meta property="og:image" content="https://designerbelt-site.vercel.app/logo.png">
   <meta property="og:url" content="https://designerbelt-site.vercel.app/">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48 64x64">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="stylesheet" href="/style.css">
-  <script src="/app.js" defer></script>
+  <link rel="stylesheet" href="/home.css">
+  <link rel="stylesheet" href="/mascot.css">
+  <script src="/home.js" defer></script>
 </head>
 <body>
-<div class="ambient" aria-hidden="true">
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
-  <div class="glow glow-c"></div>
-  <canvas id="floaters"></canvas>
-  <div class="grain"></div>
-  <div class="spot" id="spot"></div>
-</div>
-<div class="scroll-progress" aria-hidden="true"><i id="scroll-bar"></i></div>
-<div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+<a class="skip" href="#content">Skip to content</a>
 
-<header>
-  <a class="brand" href="#" aria-label="Designer's Belt home"><img class="brandmark" src="/logo.png" alt="" width="33" height="33"> designer's belt</a>
-  <nav aria-label="Main navigation"><a href="#tools">Tools</a><a href="#workflow">Workflow</a><a href="/pricing">Pricing</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a></nav>
-  <a class="button small" href="#launch">Coming soon <span>↗</span></a>
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Designer's Belt home"><img src="/logo.png" alt="" width="33" height="33"> designer's belt</a>
+  <nav aria-label="Main">
+    <a href="#drag">Drag</a>
+    <a href="#clients">Clients</a>
+    <a href="#tools">Tools</a>
+    <a href="/pricing">Pricing</a>
+  </nav>
 </header>
 
-<main>
+<main id="content">
+
+  <!-- 1. Hero: the mascot is the page's protagonist, and it looks at you. -->
   <section class="hero">
-    <div class="metal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="hero-copy">
-      <p class="eyebrow"><span class="status"></span> YOUR NEW CREATIVE SIDEKICK</p>
-      <h1 data-split><span>Not another app.</span><br>A toolbelt.</h1>
-      <p class="lead">Fonts, files, colors and conversions.<br>Everything between you and your next great idea.</p>
-      <a class="button primary" href="#tools">Meet your tools <span>↓</span></a>
-      <p class="meta">FOR WINDOWS · BUILT FOR YOUR FLOW</p>
-    </div>
-    <div class="dock-wrap">
-      <div class="tooltip" id="dock-label">Small tools. Big flow.</div>
-      <div class="dock" role="group" aria-label="Explore the tools">
-        <button class="dock-item active" data-tool="font" aria-label="Font Finder" aria-pressed="true"><span>Aa</span><i></i></button>
-        <button class="dock-item" data-tool="finder" aria-label="QuickFinder" aria-pressed="false"><span>⌕</span><i></i></button>
-        <button class="dock-item" data-tool="library" aria-label="Library" aria-pressed="false"><span>▦</span><i></i></button>
-        <b></b>
-        <button class="dock-item" data-tool="color" aria-label="Color Picker" aria-pressed="false"><span class="color-icon"></span><i></i></button>
-        <button class="dock-item" data-tool="convert" aria-label="QuickConverter" aria-pressed="false"><span>⇄</span><i></i></button>
-        <button class="dock-item" data-tool="coverage" aria-label="FontCoverage" aria-pressed="false"><span>Æ</span><i></i></button>
-      </div>
-      <p>YOUR ENTIRE TOOLBELT. ONE SHORTCUT AWAY.</p>
-    </div>
-    <span class="scroll-cue" aria-hidden="true"><i></i></span>
-  </section>
-
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track" id="marquee-track">
-      <p><b>Font Finder</b><em>✳</em><b>QuickFinder</b><em>✳</em><b>Library</b><em>✳</em><b>Color Picker</b><em>✳</em><b>QuickConverter</b><em>✳</em><b>FontCoverage</b><em>✳</em><b>QuickViewer</b><em>✳</em><b>One shortcut away</b><em>✳</em></p>
-      <p><b>Font Finder</b><em>✳</em><b>QuickFinder</b><em>✳</em><b>Library</b><em>✳</em><b>Color Picker</b><em>✳</em><b>QuickConverter</b><em>✳</em><b>FontCoverage</b><em>✳</em><b>QuickViewer</b><em>✳</em><b>One shortcut away</b><em>✳</em></p>
-    </div>
-  </div>
-
-  <section class="feature section" id="tools">
-    <div class="section-heading" data-reveal>
-      <p class="eyebrow">01 / FIND YOUR TYPE</p>
-      <h2 data-split>What font is that?<br><span>Drag. Know.</span></h2>
-      <p>Select an area of your screen. Belt reads the text<br class="desktop"> and finds the font. Locally, on your PC.</p>
-    </div>
-    <div class="font-stage" data-tilt-stage data-reveal>
-      <div class="stage-light" aria-hidden="true"></div>
-      <div class="poster" data-tilt="4">
-        <span class="poster-top">STUDIO NOTES — VOL. 01</span>
-        <div class="selected-type">Good design<br>starts with<br><em>curiosity.</em><i class="handle tl"></i><i class="handle tr"></i><i class="handle bl"></i><i class="handle br"></i></div>
-        <div class="poster-bottom">A LITTLE OBSERVATION GOES A LONG WAY. <span>↗</span></div>
-      </div>
-      <div class="font-panel" data-tilt="9">
-        <div class="panel-bar"><span><i class="orange-dot"></i> Font Finder</span><span>×</span></div>
-        <div class="panel-content">
-          <p class="muted-label">SELECTED TEXT</p>
-          <p class="sample-text">Good design starts with curiosity.</p>
-          <div class="panel-rule"></div>
-          <p class="muted-label">FONT MATCHES <span>ILLUSTRATIVE PREVIEW</span></p>
-          <div class="font-match"><span class="aa serif">Aa</span><div><strong>Georgia</strong><small>Regular · Installed</small></div><span class="match-check">↗</span></div>
-          <div class="font-match"><span class="aa serif italic">Aa</span><div><strong>Times New Roman</strong><small>Regular · Installed</small></div><span class="match-check">↗</span></div>
-          <div class="font-match"><span class="aa">Aa</span><div><strong>Arial</strong><small>Regular · Installed</small></div><span class="match-check">↗</span></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>The utility belt<br>for designers.</h1>
+        <p class="lead">Fonts, colors, clients and conversions on one belt. Reach for the right tool without leaving your work.</p>
+        <div class="actions">
+          <a class="btn primary" href="/pricing">See pricing</a>
+          <button class="btn ghost" type="button" disabled>Not on sale yet</button>
         </div>
-        <div class="panel-footer"><span>◉ Processed on your device</span><kbd>esc</kbd></div>
-        <span class="scanline" aria-hidden="true"></span>
+        <p class="meta">For Windows.</p>
+      </div>
+      <div class="hero-mascot">
+        <!-- mascot:start -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 660" width="600" height="660" class="db-mascot" aria-hidden="true" focusable="false">
+<!-- Designer's Belt mascot, motion v1. Base art: UI designer (site-lp-v2/mascot-layers.svg). Wrapper groups added for motion; ids are unique and prefixed dbm-. -->
+<defs>
+  <clipPath id="dbm-clip-eye-left"><path d="M220 262 C242 262 264 272 278 288 C254 294 230 286 220 262 Z"/></clipPath>
+  <clipPath id="dbm-clip-eye-right"><path d="M380 262 C358 262 336 272 322 288 C346 294 370 286 380 262 Z"/></clipPath>
+</defs>
+<g class="dbm-root" id="dbm-root">
+  <g class="dbm-tail-pivot" id="dbm-tail-pivot">
+    <path id="dbm-tail" d="M418 590 C520 600 580 540 552 450 C542 418 505 424 513 452" fill="none" stroke="#F3F2EF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="dbm-torso" id="dbm-torso">
+    <path class="dbm-body" id="dbm-body" d="M205 390 C172 480 168 570 186 650 L414 650 C432 570 428 480 395 390 Z" fill="#141616" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="dbm-arm dbm-arm-left" id="dbm-arm-left">
+      <path d="M214 430 C190 480 192 520 206 548" fill="none" stroke="#F3F2EF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g class="dbm-arm dbm-arm-right" id="dbm-arm-right">
+      <path d="M386 430 C410 480 408 520 394 548" fill="none" stroke="#F3F2EF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g class="dbm-belt" id="dbm-belt">
+      <path id="dbm-belt-strap" d="M176 505 L424 505 L430 553 L170 553 Z" fill="#FB7541"/>
+      <path id="dbm-belt-buckle" d="M282 497 h36 v64 h-36 z" fill="#F3F2EF"/>
+      <path id="dbm-belt-buckle-hole" d="M290 507 h20 v44 h-20 z" fill="#0B0C0C"/>
+      <g class="dbm-pouch dbm-pouch-1" id="dbm-pouch-quickfinder"><g class="dbm-pouch-bounce">
+        <path d="M186 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M196 581 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0 M210 587 L217 594" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-2" id="dbm-pouch-fontfinder"><g class="dbm-pouch-bounce">
+        <path d="M232 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M242 593 L252 573 L262 593 M246 586 L258 586" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-3" id="dbm-pouch-colorpicker"><g class="dbm-pouch-bounce">
+        <path d="M328 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M348 572 C358 584 358 593 348 593 C338 593 338 584 348 572 Z" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-4" id="dbm-pouch-quickconverter"><g class="dbm-pouch-bounce">
+        <path d="M374 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M384 579 L404 579 M399 574 L404 579 L399 584 M404 590 L384 590 M389 585 L384 590 L389 595" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+    </g>
+    <g class="dbm-head-look" id="dbm-head-look"><g class="dbm-head" id="dbm-head">
+      <g class="dbm-ear-look dbm-ear-look-left"><g class="dbm-ear dbm-ear-left" id="dbm-ear-left">
+        <path d="M176 250 C172 175 188 115 210 72 L292 152 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M196 200 C196 160 204 130 214 108 L258 150 Z" fill="#2A2D2D"/>
+      </g></g>
+      <g class="dbm-ear-look dbm-ear-look-right"><g class="dbm-ear dbm-ear-right" id="dbm-ear-right">
+        <path d="M424 250 C428 175 412 115 390 72 L308 152 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M404 200 C404 160 396 130 386 108 L342 150 Z" fill="#2A2D2D"/>
+      </g></g>
+      <path id="dbm-head-shape" d="M170 300 C165 215 205 150 300 150 C395 150 435 215 430 300 C430 370 370 405 300 405 C230 405 170 370 170 300 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="dbm-muzzle" d="M200 335 C225 305 270 305 300 318 C330 305 375 305 400 335 C398 380 355 402 300 402 C245 402 202 380 200 335 Z" fill="#F3F2EF"/>
+      <g class="dbm-mouth" id="dbm-mouth">
+        <path d="M262 348 L338 348 L330 388 C322 396 278 396 270 388 Z" fill="#0B0C0C"/>
+        <path d="M280 383 a20 7 0 1 0 40 0 a20 7 0 1 0 -40 0" fill="#F3F2EF"/>
+      </g>
+      <path class="dbm-smile" id="dbm-smile" d="M264 349 Q300 388 336 349 Q300 369 264 349 Z" fill="#0B0C0C"/>
+      <path id="dbm-nose" d="M288 322 L312 322 L300 337 Z" fill="#0B0C0C"/>
+      <g class="dbm-whiskers dbm-whiskers-left" id="dbm-whiskers-left" fill="none" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round">
+        <path d="M192 332 L118 306"/><path d="M192 352 L110 354"/>
+      </g>
+      <g class="dbm-whiskers dbm-whiskers-right" id="dbm-whiskers-right" fill="none" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round">
+        <path d="M408 332 L482 306"/><path d="M408 352 L490 354"/>
+      </g>
+      <g class="dbm-eyes" id="dbm-eyes">
+        <g class="dbm-eye dbm-eye-left" id="dbm-eye-left">
+          <path d="M220 262 C242 262 264 272 278 288 C254 294 230 286 220 262 Z" fill="#F3F2EF"/>
+          <g clip-path="url(#dbm-clip-eye-left)"><g class="dbm-pupil-look"><g class="dbm-pupil dbm-pupil-left" id="dbm-pupil-left">
+            <circle cx="252" cy="276" r="7" fill="#0B0C0C"/>
+          </g></g></g>
+        </g>
+        <g class="dbm-eye dbm-eye-right" id="dbm-eye-right">
+          <path d="M380 262 C358 262 336 272 322 288 C346 294 370 286 380 262 Z" fill="#F3F2EF"/>
+          <g clip-path="url(#dbm-clip-eye-right)"><g class="dbm-pupil-look"><g class="dbm-pupil dbm-pupil-right" id="dbm-pupil-right">
+            <circle cx="348" cy="276" r="7" fill="#0B0C0C"/>
+          </g></g></g>
+        </g>
+        <g class="dbm-squint" id="dbm-squint" fill="none" stroke="#F3F2EF" stroke-width="7" stroke-linecap="round">
+          <path d="M226 286 Q249 266 272 286"/><path d="M328 286 Q351 266 374 286"/>
+        </g>
+      </g>
+    </g></g>
+  </g>
+  <g class="dbm-tile" id="dbm-tile"><g class="dbm-tile-float">
+    <g transform="rotate(8 478 312)">
+      <rect x="438" y="272" width="80" height="80" rx="16" fill="#F3F2EF"/>
+      <circle cx="497" cy="293" r="7" fill="#FB7541"/>
+      <path d="M452 337 L472 311 L486 327 L495 316 L506 337 Z" fill="#FB7541"/>
+    </g>
+  </g></g>
+  <path class="dbm-check" id="dbm-check" d="M446 140 L466 160 L506 116" pathLength="1" stroke-dasharray="1 1" fill="none" stroke="#FB7541" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>
+<!-- mascot:end -->
+        <p class="mascot-note">Move your cursor. The cat is watching.</p>
       </div>
     </div>
-    <p class="caption" data-reveal>A closer look at the Font Finder experience. Interface shown for illustration.</p>
   </section>
 
-  <section class="section tool-section" id="workflow">
-    <div class="section-heading" data-reveal>
-      <p class="eyebrow">02 / LESS FRICTION, MORE MAKING</p>
-      <h2 data-split>A tool for every<br><span>tiny task.</span></h2>
-      <p>The little things shouldn't interrupt the big idea.</p>
-    </div>
-    <div class="tool-layout">
-      <div class="tool-tabs" role="group" aria-label="Tool previews">
-        <button data-tool="finder" class="tool-tab active" aria-pressed="true" data-reveal><span>⌕</span><div><strong>QuickFinder</strong><small>Type a name. Jump to the file.</small></div><b>↗</b></button>
-        <button data-tool="library" class="tool-tab" aria-pressed="false" data-reveal><span>▦</span><div><strong>Library</strong><small>Your clients. Your existing folders.</small></div><b>↗</b></button>
-        <button data-tool="color" class="tool-tab" aria-pressed="false" data-reveal><span>◉</span><div><strong>Color Picker</strong><small>Grab any color on screen.</small></div><b>↗</b></button>
-        <button data-tool="convert" class="tool-tab" aria-pressed="false" data-reveal><span>⇄</span><div><strong>QuickConverter</strong><small>Batch convert. Back to design.</small></div><b>↗</b></button>
-        <button data-tool="coverage" class="tool-tab" aria-pressed="false" data-reveal><span>Æ</span><div><strong>FontCoverage</strong><small>Does this font cover your text?</small></div><b>↗</b></button>
+  <!-- 2. Drag: a demo the visitor can actually use, with mouse, touch or the keyboard. -->
+  <section class="section" id="drag">
+    <div class="wrap">
+      <h2>Grab an asset. Drop it where you work.</h2>
+      <p class="lead narrow">Pick up a file from your Library and drag it straight out. No export dialogs, no hunting through folders.</p>
+
+      <div class="demo" data-stage="rest">
+        <div class="demo-grid">
+          <div class="demo-col">
+            <p class="panel-label">Library</p>
+            <button class="asset asset-live" type="button" data-asset="logo-primary.png" aria-describedby="drag-help">
+              <span class="asset-thumb thumb-light" aria-hidden="true"></span>
+              <span class="asset-name">logo-primary.png</span>
+            </button>
+            <div class="asset asset-static" aria-hidden="true"><span class="asset-thumb thumb-accent"></span></div>
+            <div class="asset asset-static" aria-hidden="true"><span class="asset-thumb thumb-dark"></span></div>
+            <p class="panel-hint" id="drag-help">Drag the file, press Enter on it, or use the button in the drop area.</p>
+          </div>
+
+          <div class="demo-col demo-target" data-target>
+            <p class="panel-label">Your design</p>
+            <div class="target-body">
+              <p class="target-hint" data-hint>Drop it anywhere in here.</p>
+              <div class="target-result" data-result hidden>
+                <span class="asset-thumb thumb-accent" aria-hidden="true"></span>
+                <span class="check" aria-hidden="true">✓</span>
+                <span class="target-done">Dropped</span>
+              </div>
+              <button class="btn small ghost only-js" type="button" data-add>Add the file without dragging</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-foot">
+          <p class="demo-status" role="status" aria-live="polite" data-status>Ready. The file is waiting in the Library.</p>
+          <button class="btn small ghost only-js" type="button" data-reset hidden>Start over</button>
+        </div>
+
+        <ul class="legend">
+          <li data-for="rest"><strong>Rest</strong><span>Assets wait in your Library, sorted by client.</span></li>
+          <li data-for="drag"><strong>Drag</strong><span>Pick one up and carry it. The belt keeps up.</span></li>
+          <li data-for="drop"><strong>Drop</strong><span>Let go where you work and keep going.</span></li>
+        </ul>
       </div>
-      <div class="demo-shell" aria-live="polite" data-tilt-stage data-reveal>
-        <div class="demo-top"><span class="window-dots">● ● ●</span><span id="demo-name">QuickFinder</span><kbd>esc</kbd></div>
-        <div id="tool-demo"></div>
-        <p class="demo-note">INTERACTIVE PRODUCT CONCEPT</p>
-        <span class="demo-autoplay" id="demo-autoplay" aria-hidden="true"><i></i></span>
+    </div>
+  </section>
+
+  <!-- 3. Clients: one library per client, switched by list or tabs. -->
+  <section class="section" id="clients">
+    <div class="wrap">
+      <h2>Every client, in its own library.</h2>
+      <p class="lead narrow">Point the belt at the folders you already keep. Each client becomes its own collection of colors, fonts and images.</p>
+
+      <div class="clients" data-clients>
+        <div class="client-list" role="group" aria-label="Choose a client">
+          <button class="client" type="button" data-client="acme" aria-pressed="true">
+            <span class="client-badge" style="--who:#2D8CFF" aria-hidden="true">AD</span>
+            <span class="client-name">Acme Demo</span>
+            <span class="client-count" data-count>24 assets</span>
+          </button>
+          <button class="client" type="button" data-client="lorem" aria-pressed="false">
+            <span class="client-badge" style="--who:#3DD68C" aria-hidden="true">LC</span>
+            <span class="client-name">Lorem Coffee</span>
+            <span class="client-count" data-count>18 assets</span>
+          </button>
+          <button class="client" type="button" data-client="example" aria-pressed="false">
+            <span class="client-badge" style="--who:#8B5CF6" aria-hidden="true">EB</span>
+            <span class="client-name">Example Bank</span>
+            <span class="client-count" data-count>31 assets</span>
+          </button>
+          <button class="client" type="button" data-client="sample" aria-pressed="false">
+            <span class="client-badge" style="--who:#F472B6" aria-hidden="true">SS</span>
+            <span class="client-name">Sample Studio</span>
+            <span class="client-count" data-count>12 assets</span>
+          </button>
+        </div>
+
+        <div class="library">
+          <div class="library-head">
+            <p class="library-title"><span class="client-badge small" style="--who:#2D8CFF" aria-hidden="true" data-badge>AD</span><span data-title>Acme Demo</span></p>
+            <div class="tabs" role="group" aria-label="Filter the library">
+              <button class="tab" type="button" data-filter="all" aria-pressed="true">All</button>
+              <button class="tab" type="button" data-filter="colors" aria-pressed="false">Colors</button>
+              <button class="tab" type="button" data-filter="fonts" aria-pressed="false">Fonts</button>
+              <button class="tab" type="button" data-filter="png" aria-pressed="false">PNG</button>
+            </div>
+          </div>
+
+          <div class="library-body" data-panel>
+            <div class="group" data-group="colors">
+              <p class="group-label">Colors</p>
+              <div class="swatches" data-swatches>
+                <span class="swatch" style="--c:#2D8CFF" title="#2D8CFF"></span>
+                <span class="swatch" style="--c:#0B1F3A" title="#0B1F3A"></span>
+                <span class="swatch" style="--c:#F5F3EF" title="#F5F3EF"></span>
+                <span class="swatch" style="--c:#FFC400" title="#FFC400"></span>
+                <span class="swatch" style="--c:#F26D6D" title="#F26D6D"></span>
+              </div>
+            </div>
+
+            <div class="group" data-group="fonts">
+              <p class="group-label">Typography</p>
+              <div class="font-rows" data-fonts>
+                <p class="font-row"><span class="font-aa">Aa</span><span class="font-name">Sora</span><span class="font-style">Bold</span></p>
+                <p class="font-row"><span class="font-aa">Aa</span><span class="font-name">Inter</span><span class="font-style">Regular</span></p>
+              </div>
+            </div>
+
+            <div class="group" data-group="png">
+              <p class="group-label">PNG graphics</p>
+              <div class="pngs" data-pngs>
+                <figure class="png"><span class="png-thumb" style="--c:#E8E5DE"></span><figcaption>logo-primary.png</figcaption></figure>
+                <figure class="png"><span class="png-thumb" style="--c:#2D8CFF"></span><figcaption>symbol.png</figcaption></figure>
+                <figure class="png"><span class="png-thumb" style="--c:#FFC400"></span><figcaption>badge.png</figcaption></figure>
+                <figure class="png"><span class="png-thumb" style="--c:#4A4A4A"></span><figcaption>pattern.png</figcaption></figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Client names and files are examples.</p>
+    </div>
+  </section>
+
+  <!-- 4. Tools: only what the app does today, plus what is still coming. -->
+  <section class="section" id="tools">
+    <div class="wrap">
+      <h2>What's on the belt.</h2>
+      <p class="lead narrow">Seven tools work today. Two more are on the way.</p>
+
+      <ul class="tools">
+        <li><span class="tool-glyph" aria-hidden="true">Aa</span><div><h3>Font Finder</h3><p>Drag over any text on screen to find the font. Recognition runs on your PC.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">⌕</span><div><h3>QuickFinder</h3><p>Press Ctrl+Space and jump to any file.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">▦</span><div><h3>Library</h3><p>Your clients and their assets, in the folders you already have.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">◉</span><div><h3>Color Picker</h3><p>Pick any pixel on screen as HEX, RGB, HSL or OKLCH.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">⇄</span><div><h3>QuickConverter</h3><p>Convert images in batches to PNG, JPEG or WebP.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">Æ</span><div><h3>FontCoverage</h3><p>Check whether a font covers your text.</p></div></li>
+        <li><span class="tool-glyph" aria-hidden="true">◧</span><div><h3>QuickViewer</h3><p>Preview images, SVG, PDF, fonts, PSD and AI files.</p></div></li>
+        <li class="soon"><span class="tool-glyph" aria-hidden="true">⌖</span><div><h3>OpticAlign <em>Coming soon</em></h3><p>Align icons by how they look, not by their boxes.</p></div></li>
+        <li class="soon"><span class="tool-glyph" aria-hidden="true">∞</span><div><h3>FixedLink <em>Coming soon</em></h3><p>Stable links for the assets you share.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ: the legal pages link here, and these are the same answers the site already published. -->
+  <section class="section" id="faq">
+    <div class="wrap faq-grid">
+      <div>
+        <h2>A few things to know.</h2>
+        <p class="lead narrow">The small print, simplified.</p>
+      </div>
+      <div class="questions">
+        <details><summary>Is it available yet?<span aria-hidden="true">+</span></summary><p>Not yet. Designer's Belt is in development. Release details will be announced here.</p></details>
+        <details><summary>Is this a subscription?<span aria-hidden="true">+</span></summary><p>The app will be sold as a one-time license: US$ 5 for up to 3 devices. Optional Cloud will be billed separately as a subscription, with its price to be announced. See <a href="/pricing">pricing</a>.</p></details>
+        <details><summary>Does it work offline?<span aria-hidden="true">+</span></summary><p>Yes. The local tools don't need internet. Cloud features need a connection.</p></details>
+        <details><summary>Are my files uploaded?<span aria-hidden="true">+</span></summary><p>Local tools process your files on your PC. Cloud uploads are optional.</p></details>
+        <details><summary>What's still on the roadmap?<span aria-hidden="true">+</span></summary><p>OpticAlign and FixedLink are in development. Features and release scope may change before launch.</p></details>
       </div>
     </div>
-    <div class="roadmap-strip" data-reveal>
-      <span>ALSO IN THE BELT</span>
-      <p>QuickViewer <small>File previews</small></p>
-      <p>OpticAlign <small>Coming soon</small></p>
-      <p>FixedLink <small>In development</small></p>
+  </section>
+
+  <!-- 5. Pricing: same promise as the pricing page, no checkout yet. -->
+  <section class="section pricing" id="pricing">
+    <div class="wrap pricing-grid">
+      <div>
+        <h2>One license. Yours to keep.</h2>
+        <p class="price-line"><strong>US$ 5</strong>, one time. Up to 3 devices.</p>
+        <p class="lead narrow">Cloud is optional and sold separately. Price to be announced.</p>
+        <div class="actions">
+          <a class="btn primary" href="/pricing">See pricing</a>
+          <button class="btn ghost" type="button" disabled>Not on sale yet</button>
+        </div>
+      </div>
+      <div class="pricing-mascot" aria-hidden="true">
+        <img src="/mascot.svg" alt="" width="300" height="330">
+      </div>
     </div>
   </section>
 
-  <section class="quiet section" id="privacy">
-    <p class="eyebrow" data-reveal>03 / YOUR WORK STAYS YOURS</p>
-    <h2 data-split>Less noise.<br><span>More headspace.</span></h2>
-    <div class="principles">
-      <article data-reveal><span>↙</span><h3>Right there. Then gone.</h3><p>Lives in the tray. Opens when you call it. Gets out of your way when you don't.</p></article>
-      <article data-reveal><span>◌</span><h3>Offline by nature.</h3><p>Local tools work without internet. Font recognition runs on your PC.</p></article>
-      <article id="cloud" data-reveal><span>☁</span><h3>Cloud, if you want it.</h3><p>Optional asset sharing with R2/S3 storage. Cloud is a separate subscription.</p></article>
-    </div>
-  </section>
-
-  <section class="license section" id="launch">
-    <div data-reveal>
-      <p class="eyebrow">04 / COMING SOON</p>
-      <h2 data-split>One license.<br><span>Yours to keep.</span></h2>
-      <p>Pay once for the app.<br>Optional Cloud, billed separately.</p>
-    </div>
-    <div class="launch-card" data-tilt-stage data-reveal>
-      <img class="brandmark" src="/logo.png" alt="" width="33" height="33">
-      <h3>Your next shortcut<br>starts here.</h3>
-      <p>Designer's Belt is in development.<br>The license will cost $5, one time, for up to 3 devices. Release date to be announced. <a href="/pricing">See pricing</a></p>
-      <a class="button primary" href="/pricing">See pricing <span>↗</span></a>
-      <small>Release date and Cloud pricing will be announced here.</small>
-    </div>
-  </section>
-
-  <section class="faq section" id="faq">
-    <div data-reveal>
-      <p class="eyebrow">THE SMALL PRINT, SIMPLIFIED</p>
-      <h2 data-split>A few things<br><span>to know.</span></h2>
-    </div>
-    <div class="questions">
-      <details data-reveal><summary>Is it available yet?<span>+</span></summary><p>Not yet. Designer's Belt is in development. Release details will be announced here.</p></details>
-      <details data-reveal><summary>Is this a subscription?<span>+</span></summary><p>The app will be sold as a one-time license: $5 for up to 3 devices. Optional Cloud will be billed separately as a subscription, with its price to be announced. See <a href="/pricing">pricing</a>.</p></details>
-      <details data-reveal><summary>Does it work offline?<span>+</span></summary><p>Yes. The local tools don't need internet. Cloud features need a connection.</p></details>
-      <details data-reveal><summary>Are my files uploaded?<span>+</span></summary><p>Local tools process your files on your PC. Cloud uploads are optional.</p></details>
-      <details data-reveal><summary>Which platforms is it built for?<span>+</span></summary><p>Designer's Belt is being built for Windows. Final system requirements will be published before release.</p></details>
-      <details data-reveal><summary>What's still on the roadmap?<span>+</span></summary><p>OpticAlign and FixedLink are in development. Features and release scope may change before launch.</p></details>
-    </div>
-  </section>
-
-  <section class="closing">
-    <p>STAY IN YOUR FLOW.</p>
-    <h2 data-split>Make more.<br><span>Interrupt less.</span></h2>
-    <a href="#tools">Explore the toolbelt <span>↑</span></a>
-  </section>
 </main>
 
-<footer>
-  <a href="#" class="brand"><img class="brandmark" src="/logo.png" alt="" width="33" height="33"> designer's belt</a>
-  <p>Small tools. Big flow.</p>
-  <nav class="legal-links" aria-label="Legal"><a href="/pricing">Pricing</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a></nav>
-  <span>© 2026 Designer's Belt. Operated by Dazz Soluções de Marketing.</span>
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <p>© 2026 Designer's Belt. Operated by Dazz Soluções de Marketing.</p>
+    <nav class="legal-links" aria-label="Legal"><a href="/pricing">Pricing</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a></nav>
+  </div>
 </footer>
 </body>
 </html>

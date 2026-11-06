@@ -22,6 +22,16 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
   if (!/<meta name="viewport"/.test(html)) fail(`${file}: missing viewport`);
   if (!/<title>[^<]+<\/title>/.test(html)) fail(`${file}: missing title`);
   if (!/<meta name="description" content="[^"]+"/.test(html)) fail(`${file}: missing description`);
+  if (slug === 'index') {
+    if ((html.match(/<h1[ >]/g) || []).length !== 1) fail('index.html: needs exactly one h1');
+    if (!/<main id="content">/.test(html) || /class="skip" href="#content"/.test(html) === false) fail('index.html: missing main/skip link');
+    // the home may load one local script (the mascot and the drag demo); nothing else, and nothing remote
+    const scripts = [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]);
+    if (scripts.length !== 1 || scripts[0] !== '/home.js') fail(`index.html: only /home.js may be loaded, found ${scripts.join(', ') || 'none'}`);
+    if (/<script(?![^>]*src=)/i.test(html)) fail('index.html: no inline scripts');
+    const css = [...html.matchAll(/<link[^>]+href="([^"]+\.css)"/g)].map((m) => m[1]);
+    for (const sheet of css) if (!sheet.startsWith('/')) fail(`index.html: stylesheet must be local, found ${sheet}`);
+  }
   if (slug !== 'index') {
     if ((html.match(/<h1[ >]/g) || []).length !== 1) fail(`${file}: needs exactly one h1`);
     if (!/<main id="content">/.test(html) || !/class="skip" href="#content"/.test(html)) fail(`${file}: missing main/skip link`);
@@ -43,7 +53,18 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
       else if (hash && !ids(read(target)).has(hash)) fail(`${file}: missing anchor ${u}`);
     }
   }
-  if (slug === 'index' && /Pricing and release date to be announced|Prices are to be announced/.test(text)) fail('index.html: still says pricing is to be announced');
+  if (slug === 'index') {
+    if (/Pricing and release date to be announced|Prices are to be announced/.test(text)) fail('index.html: still says pricing is to be announced');
+    if (!/US\$ 5/.test(text)) fail('index.html: the $5 license price is missing');
+    if (!/Up to 3 devices/.test(text)) fail('index.html: the 3-device limit is missing');
+    if (!/Price to be announced/.test(text)) fail('index.html: Cloud price must stay "to be announced"');
+    if (/href="https?:\/\/[^"]*(paddle|checkout)/i.test(html) || /<a[^>]*>\s*Buy/i.test(text)) fail('index.html: checkout link exists but checkout does not');
+    if (!/Not on sale yet/.test(text)) fail('index.html: the disabled license button is missing');
+    if (!/class="db-mascot"/.test(html)) fail('index.html: the mascot is not inlined');
+    if (!/id="drag"/.test(html) || !/data-asset/.test(html)) fail('index.html: the drag demo is missing');
+    if (!/data-clients/.test(html)) fail('index.html: the client library is missing');
+    if (/Coming soon/.test(text) === false) fail('index.html: OpticAlign/FixedLink must be marked coming soon');
+  }
 }
 
 const pricing = read('pricing.html');

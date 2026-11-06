@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 660" width="600" height="660" class="db-mascot" aria-hidden="true" focusable="false">
+<!-- Designer's Belt mascot, motion v1. Base art: UI designer (site-lp-v2/mascot-layers.svg). Wrapper groups added for motion; ids are unique and prefixed dbm-. -->
+<defs>
+  <clipPath id="dbm-clip-eye-left"><path d="M220 262 C242 262 264 272 278 288 C254 294 230 286 220 262 Z"/></clipPath>
+  <clipPath id="dbm-clip-eye-right"><path d="M380 262 C358 262 336 272 322 288 C346 294 370 286 380 262 Z"/></clipPath>
+</defs>
+<g class="dbm-root" id="dbm-root">
+  <g class="dbm-tail-pivot" id="dbm-tail-pivot">
+    <path id="dbm-tail" d="M418 590 C520 600 580 540 552 450 C542 418 505 424 513 452" fill="none" stroke="#F3F2EF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="dbm-torso" id="dbm-torso">
+    <path class="dbm-body" id="dbm-body" d="M205 390 C172 480 168 570 186 650 L414 650 C432 570 428 480 395 390 Z" fill="#141616" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="dbm-arm dbm-arm-left" id="dbm-arm-left">
+      <path d="M214 430 C190 480 192 520 206 548" fill="none" stroke="#F3F2EF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g class="dbm-arm dbm-arm-right" id="dbm-arm-right">
+      <path d="M386 430 C410 480 408 520 394 548" fill="none" stroke="#F3F2EF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g class="dbm-belt" id="dbm-belt">
+      <path id="dbm-belt-strap" d="M176 505 L424 505 L430 553 L170 553 Z" fill="#FB7541"/>
+      <path id="dbm-belt-buckle" d="M282 497 h36 v64 h-36 z" fill="#F3F2EF"/>
+      <path id="dbm-belt-buckle-hole" d="M290 507 h20 v44 h-20 z" fill="#0B0C0C"/>
+      <g class="dbm-pouch dbm-pouch-1" id="dbm-pouch-quickfinder"><g class="dbm-pouch-bounce">
+        <path d="M186 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M196 581 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0 M210 587 L217 594" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-2" id="dbm-pouch-fontfinder"><g class="dbm-pouch-bounce">
+        <path d="M232 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M242 593 L252 573 L262 593 M246 586 L258 586" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-3" id="dbm-pouch-colorpicker"><g class="dbm-pouch-bounce">
+        <path d="M328 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M348 572 C358 584 358 593 348 593 C338 593 338 584 348 572 Z" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+      <g class="dbm-pouch dbm-pouch-4" id="dbm-pouch-quickconverter"><g class="dbm-pouch-bounce">
+        <path d="M374 553 h40 v50 q0 8 -8 8 h-24 q-8 0 -8 -8 z" fill="#1B1D1D" stroke="#FB7541" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M384 579 L404 579 M399 574 L404 579 L399 584 M404 590 L384 590 M389 585 L384 590 L389 595" fill="none" stroke="#F3F2EF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g></g>
+    </g>
+    <g class="dbm-head-look" id="dbm-head-look"><g class="dbm-head" id="dbm-head">
+      <g class="dbm-ear-look dbm-ear-look-left"><g class="dbm-ear dbm-ear-left" id="dbm-ear-left">
+        <path d="M176 250 C172 175 188 115 210 72 L292 152 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M196 200 C196 160 204 130 214 108 L258 150 Z" fill="#2A2D2D"/>
+      </g></g>
+      <g class="dbm-ear-look dbm-ear-look-right"><g class="dbm-ear dbm-ear-right" id="dbm-ear-right">
+        <path d="M424 250 C428 175 412 115 390 72 L308 152 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M404 200 C404 160 396 130 386 108 L342 150 Z" fill="#2A2D2D"/>
+      </g></g>
+      <path id="dbm-head-shape" d="M170 300 C165 215 205 150 300 150 C395 150 435 215 430 300 C430 370 370 405 300 405 C230 405 170 370 170 300 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="dbm-muzzle" d="M200 335 C225 305 270 305 300 318 C330 305 375 305 400 335 C398 380 355 402 300 402 C245 402 202 380 200 335 Z" fill="#F3F2EF"/>
+      <g class="dbm-mouth" id="dbm-mouth">
+        <path d="M262 348 L338 348 L330 388 C322 396 278 396 270 388 Z" fill="#0B0C0C"/>
+        <path d="M280 383 a20 7 0 1 0 40 0 a20 7 0 1 0 -40 0" fill="#F3F2EF"/>
+      </g>
+      <path class="dbm-smile" id="dbm-smile" d="M264 349 Q300 388 336 349 Q300 369 264 349 Z" fill="#0B0C0C"/>
+      <path id="dbm-nose" d="M288 322 L312 322 L300 337 Z" fill="#0B0C0C"/>
+      <g class="dbm-whiskers dbm-whiskers-left" id="dbm-whiskers-left" fill="none" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round">
+        <path d="M192 332 L118 306"/><path d="M192 352 L110 354"/>
+      </g>
+      <g class="dbm-whiskers dbm-whiskers-right" id="dbm-whiskers-right" fill="none" stroke="#F3F2EF" stroke-width="8" stroke-linecap="round">
+        <path d="M408 332 L482 306"/><path d="M408 352 L490 354"/>
+      </g>
+      <g class="dbm-eyes" id="dbm-eyes">
+        <g class="dbm-eye dbm-eye-left" id="dbm-eye-left">
+          <path d="M220 262 C242 262 264 272 278 288 C254 294 230 286 220 262 Z" fill="#F3F2EF"/>
+          <g clip-path="url(#dbm-clip-eye-left)"><g class="dbm-pupil-look"><g class="dbm-pupil dbm-pupil-left" id="dbm-pupil-left">
+            <circle cx="252" cy="276" r="7" fill="#0B0C0C"/>
+          </g></g></g>
+        </g>
+        <g class="dbm-eye dbm-eye-right" id="dbm-eye-right">
+          <path d="M380 262 C358 262 336 272 322 288 C346 294 370 286 380 262 Z" fill="#F3F2EF"/>
+          <g clip-path="url(#dbm-clip-eye-right)"><g class="dbm-pupil-look"><g class="dbm-pupil dbm-pupil-right" id="dbm-pupil-right">
+            <circle cx="348" cy="276" r="7" fill="#0B0C0C"/>
+          </g></g></g>
+        </g>
+        <g class="dbm-squint" id="dbm-squint" fill="none" stroke="#F3F2EF" stroke-width="7" stroke-linecap="round">
+          <path d="M226 286 Q249 266 272 286"/><path d="M328 286 Q351 266 374 286"/>
+        </g>
+      </g>
+    </g></g>
+  </g>
+  <g class="dbm-tile" id="dbm-tile"><g class="dbm-tile-float">
+    <g transform="rotate(8 478 312)">
+      <rect x="438" y="272" width="80" height="80" rx="16" fill="#F3F2EF"/>
+      <circle cx="497" cy="293" r="7" fill="#FB7541"/>
+      <path d="M452 337 L472 311 L486 327 L495 316 L506 337 Z" fill="#FB7541"/>
+    </g>
+  </g></g>
+  <path class="dbm-check" id="dbm-check" d="M446 140 L466 160 L506 116" pathLength="1" stroke-dasharray="1 1" fill="none" stroke="#FB7541" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

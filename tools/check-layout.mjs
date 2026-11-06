@@ -25,7 +25,7 @@ ws.addEventListener('message', (e) => { const m = JSON.parse(e.data); if (m.id &
 const send = (method, params = {}) => new Promise((res) => { const n = ++id; pending.set(n, res); ws.send(JSON.stringify({ id: n, method, params })); });
 
 const widths = [360, 390, 768, 1024, 1440];
-const paths = ['/pricing', '/terms', '/privacy', '/refunds'];
+const paths = ['/', '/pricing', '/terms', '/privacy', '/refunds'];
 const failures = [];
 for (const w of widths) for (const p of paths) {
   await send('Emulation.setDeviceMetricsOverride', { width: w, height: 900, deviceScaleFactor: 1, mobile: w < 700 });
