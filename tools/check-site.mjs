@@ -27,7 +27,8 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (!/<main id="content">/.test(html) || /class="skip" href="#content"/.test(html) === false) fail('index.html: missing main/skip link');
     // the home may load one local script (the mascot and the drag demo); nothing else, and nothing remote
     const scripts = [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]);
-    if (scripts.length !== 1 || scripts[0] !== '/home.js') fail(`index.html: only /home.js may be loaded, found ${scripts.join(', ') || 'none'}`);
+    const allowed = ['/mascot-head.js', '/drag-autoplay.js', '/home.js'];
+    if (scripts.join(',') !== allowed.join(',')) fail(`index.html: scripts must be exactly ${allowed.join(', ')}, found ${scripts.join(', ') || 'none'}`);
     if (/<script(?![^>]*src=)/i.test(html)) fail('index.html: no inline scripts');
     const css = [...html.matchAll(/<link[^>]+href="([^"]+\.css)"/g)].map((m) => m[1]);
     for (const sheet of css) if (!sheet.startsWith('/')) fail(`index.html: stylesheet must be local, found ${sheet}`);
@@ -60,10 +61,15 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (!/Price to be announced/.test(text)) fail('index.html: Cloud price must stay "to be announced"');
     if (/href="https?:\/\/[^"]*(paddle|checkout)/i.test(html) || /<a[^>]*>\s*Buy/i.test(text)) fail('index.html: checkout link exists but checkout does not');
     if (!/Not on sale yet/.test(text)) fail('index.html: the disabled license button is missing');
-    if (!/class="db-mascot"/.test(html)) fail('index.html: the mascot is not inlined');
-    if (/dbm-belt|dbm-tail-pivot|dbm-body/.test(html)) fail('index.html: the mascot must be head only');
-    if (!/dbm-head/.test(html)) fail('index.html: the mascot head is missing');
-    if (!/data-cursor/.test(html)) fail('index.html: the demo cursor is missing');
+    if (!/class="db-head"/.test(html)) fail('index.html: the head mascot is not inlined');
+    if (/dbm-belt|dbm-tail-pivot|dbm-body|dbm-head-look/.test(html)) fail('index.html: the mascot must be head only (v2)');
+    if (!/dbh-eye/.test(html)) fail('index.html: the head mascot layers are missing');
+    if (!/data-asset/.test(html)) fail('index.html: the draggable asset is missing');
+    if (!/data-target/.test(html)) fail('index.html: the editor drop target is missing');
+    if (!/data-result/.test(html)) fail('index.html: the new layer row is missing');
+    if (!/brand-poster\.psd/.test(html)) fail('index.html: the editor document tab is missing');
+    if (!/class="ed-layers"/.test(html)) fail('index.html: the Layers panel is missing');
+    if (/adobe|photoshop|ps/i.test(html)) fail('index.html: no Adobe/Photoshop name or mark may appear');
     if (!/id="drag"/.test(html) || !/data-asset/.test(html)) fail('index.html: the drag demo is missing');
     if (!/data-clients/.test(html)) fail('index.html: the client library is missing');
     if (/Coming soon/.test(text) === false) fail('index.html: OpticAlign/FixedLink must be marked coming soon');

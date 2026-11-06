@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Paste mascot.svg between the mascot markers in index.html.
+"""Paste mascot-head.svg between the mascot markers in index.html.
 
 CSS cannot reach an SVG loaded through <img>, so the hero copy is inlined; the pricing
-section keeps the file version. Rerun after editing mascot.svg.
+section keeps the file version. Rerun after editing mascot-head.svg (the motion package from the Motion designer).
 """
 from pathlib import Path
 

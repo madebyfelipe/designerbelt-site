@@ -1,146 +1,85 @@
-/* Designer's Belt mascot, motion v1.
-   Pure CSS. JS only toggles .is-dragging / .is-dropped / .is-paused and sets --look-x / --look-y (-1..1).
-   All transforms run in SVG user units (viewBox 600x660). See SPEC.md. */
+/* Designer's Belt mascot: head only, minimal (v2).
+   Expression lives in the eyes. JS sets --look-x / --look-y (-1..1) and toggles
+   .is-dragging / .is-dropped / .is-paused. Everything else is CSS. See SPEC.md. */
 
-.db-mascot { --look-x: 0; --look-y: 0; --perk: 0; display: block; width: 100%; height: auto; overflow: visible; }
-.db-mascot * { transform-box: view-box; }
+.db-head { --look-x: 0; --look-y: 0; display: block; width: 100%; height: auto; overflow: visible;
+  --ease-breath: cubic-bezier(.45, 0, .55, 1); --ease-out: cubic-bezier(.22, 1, .36, 1); --ease-pop: cubic-bezier(.34, 1.3, .64, 1); }
+.db-head * { transform-box: view-box; }
 
-/* ---------- easings ---------- */
-.db-mascot {
-  --ease-breath: cubic-bezier(.45, 0, .55, 1);   /* sine-like in/out for loops */
-  --ease-out: cubic-bezier(.22, 1, .36, 1);      /* quick settle, no overshoot */
-  --ease-pop: cubic-bezier(.34, 1.3, .64, 1);    /* small overshoot (~6%) */
+/* pivots (viewBox units) */
+.dbh-root, .dbh-look, .dbh-float { transform-origin: 200px 380px; }
+.dbh-face { transform-origin: 200px 270px; }
+.dbh-ear-l-look, .dbh-ear-l { transform-origin: 134px 180px; }
+.dbh-ear-r-look, .dbh-ear-r { transform-origin: 266px 180px; }
+.dbh-eye, .dbh-eye-tilt { transform-box: fill-box; transform-origin: center; }
+.dbh-happy { transform-origin: 200px 256px; }
+
+/* resting expression: slanted eyes (the brand cat's look) */
+.dbh-eye-tilt-l { transform: rotate(14deg); }
+.dbh-eye-tilt-r { transform: rotate(-14deg); }
+.dbh-happy { opacity: 0; }
+
+/* ---------- idle ---------- */
+.dbh-float  { animation: dbh-float 3.6s var(--ease-breath) infinite; }
+.dbh-eye    { animation: dbh-blink 11s linear infinite; }
+.dbh-eyes   { animation: dbh-glance 13s var(--ease-out) infinite; }       /* looks around on its own when nobody moves */
+.dbh-ear-r  { animation: dbh-flick-r 9s var(--ease-out) infinite; }
+.dbh-ear-l  { animation: dbh-flick-l 14s var(--ease-out) infinite; }
+
+@keyframes dbh-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-.8deg); } }
+@keyframes dbh-blink {
+  0%, 40% { transform: scaleY(1); } 40.55% { transform: scaleY(.1); } 41.1% { transform: scaleY(1); }
+  92% { transform: scaleY(1); } 92.55% { transform: scaleY(.1); } 93.1% { transform: scaleY(1); }
+  94.2% { transform: scaleY(1); } 94.75% { transform: scaleY(.1); } 95.3%, 100% { transform: scaleY(1); }
 }
-
-/* ---------- pivots ---------- */
-.dbm-root        { transform-origin: 300px 650px; }
-.dbm-torso       { transform-origin: 300px 650px; }
-.dbm-body        { transform-origin: 300px 650px; }
-.dbm-tail-pivot  { transform-origin: 418px 590px; }
-.dbm-head-look, .dbm-head { transform-origin: 300px 395px; }
-.dbm-ear-look-left,  .dbm-ear-left  { transform-origin: 234px 201px; }
-.dbm-ear-look-right, .dbm-ear-right { transform-origin: 366px 201px; }
-.dbm-eye-left    { transform-origin: 249px 277px; }
-.dbm-eye-right   { transform-origin: 351px 277px; }
-.dbm-pupil-left  { transform-origin: 252px 276px; }
-.dbm-pupil-right { transform-origin: 348px 276px; }
-.dbm-mouth, .dbm-smile { transform-origin: 300px 348px; }
-.dbm-whiskers-left  { transform-origin: 192px 342px; }
-.dbm-whiskers-right { transform-origin: 408px 342px; }
-.dbm-arm-left    { transform-origin: 214px 430px; }
-.dbm-arm-right   { transform-origin: 386px 430px; }
-.dbm-pouch-1 { transform-origin: 206px 553px; } .dbm-pouch-2 { transform-origin: 252px 553px; }
-.dbm-pouch-3 { transform-origin: 348px 553px; } .dbm-pouch-4 { transform-origin: 394px 553px; }
-.dbm-pouch-1 .dbm-pouch-bounce { transform-origin: 206px 553px; } .dbm-pouch-2 .dbm-pouch-bounce { transform-origin: 252px 553px; }
-.dbm-pouch-3 .dbm-pouch-bounce { transform-origin: 348px 553px; } .dbm-pouch-4 .dbm-pouch-bounce { transform-origin: 394px 553px; }
-.dbm-tile, .dbm-tile-float { transform-origin: 478px 312px; }
-.dbm-check       { transform-origin: 476px 138px; }
-
-/* ---------- 1. idle loops ---------- */
-.dbm-torso      { animation: dbm-breathe 3.2s var(--ease-breath) infinite; }
-.dbm-body       { animation: dbm-body-breathe 3.2s var(--ease-breath) infinite; }
-.dbm-head       { animation: dbm-head-follow 3.2s var(--ease-breath) -.35s infinite; }   /* lags the torso: overlap */
-.dbm-tail-pivot { animation: dbm-tail 2.4s var(--ease-breath) infinite alternate; }
-.dbm-eye        { animation: dbm-blink 11s linear infinite; }
-.dbm-ear-right  { animation: dbm-ear-flick-r 9s var(--ease-out) infinite; }
-.dbm-ear-left   { animation: dbm-ear-flick-l 13s var(--ease-out) infinite; }
-.dbm-whiskers-left  { animation: dbm-whisk-l 7s var(--ease-out) infinite; }
-.dbm-whiskers-right { animation: dbm-whisk-r 7s var(--ease-out) infinite; }
-
-@keyframes dbm-breathe      { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-@keyframes dbm-body-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.01, 1.016); } }
-@keyframes dbm-head-follow  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes dbm-tail         { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
-/* 11 s cycle: single blink at ~4.9 s, double blink at ~10.3 s. Each blink 120 ms. */
-@keyframes dbm-blink {
-  0%, 44%   { transform: scaleY(1); } 44.55% { transform: scaleY(.08); } 45.1% { transform: scaleY(1); }
-  93%       { transform: scaleY(1); } 93.55% { transform: scaleY(.08); } 94.1% { transform: scaleY(1); }
-  95.2%     { transform: scaleY(1); } 95.75% { transform: scaleY(.08); } 96.3%, 100% { transform: scaleY(1); }
+@keyframes dbh-glance {
+  0%, 18% { transform: translate(0, 0); } 21%, 30% { transform: translate(-12px, 2px); }
+  33%, 60% { transform: translate(0, 0); } 63%, 71% { transform: translate(11px, -5px); } 74%, 100% { transform: translate(0, 0); }
 }
-@keyframes dbm-ear-flick-r { 0%, 90% { transform: rotate(0); } 91.5% { transform: rotate(9deg); } 93.5% { transform: rotate(-2deg); } 95.5%, 100% { transform: rotate(0); } }
-@keyframes dbm-ear-flick-l { 0%, 58% { transform: rotate(0); } 59% { transform: rotate(-8deg); } 60.5% { transform: rotate(2deg); } 62%, 100% { transform: rotate(0); } }
-@keyframes dbm-whisk-l { 0%, 70% { transform: rotate(0); } 71.5% { transform: rotate(5deg); } 73% { transform: rotate(-1deg); } 75%, 100% { transform: rotate(0); } }
-@keyframes dbm-whisk-r { 0%, 70% { transform: rotate(0); } 71.5% { transform: rotate(-5deg); } 73% { transform: rotate(1deg); } 75%, 100% { transform: rotate(0); } }
+@keyframes dbh-flick-r { 0%, 88% { transform: rotate(0); } 89.5% { transform: rotate(10deg); } 91.5% { transform: rotate(-2deg); } 93.5%, 100% { transform: rotate(0); } }
+@keyframes dbh-flick-l { 0%, 55% { transform: rotate(0); } 56% { transform: rotate(-9deg); } 57.5% { transform: rotate(2deg); } 59%, 100% { transform: rotate(0); } }
 
-/* ---------- 2. look (layered on every state; driven by --look-x/--look-y) ---------- */
-.dbm-pupil-look { transform: translate(calc(var(--look-x) * 10px), calc(var(--look-y) * 5px)); transition: transform 120ms var(--ease-out); }
-.dbm-head-look  { transform: translate(calc(var(--look-x) * 6px), calc(var(--look-y) * 4px)) rotate(calc(var(--look-x) * 4deg)); transition: transform 320ms var(--ease-out); }
-.dbm-ear-look-left  { transform: rotate(calc(var(--look-x) * 3deg - var(--perk) * 7deg)); transition: transform 360ms var(--ease-pop); }
-.dbm-ear-look-right { transform: rotate(calc(var(--look-x) * 3deg + var(--perk) * 7deg)); transition: transform 360ms var(--ease-pop); }
+/* ---------- look (layered on every state) ---------- */
+.dbh-face { transform: translate(calc(var(--look-x) * 16px), calc(var(--look-y) * 10px)); transition: transform 140ms var(--ease-out); }
+.dbh-look { transform: translate(calc(var(--look-x) * 8px), calc(var(--look-y) * 5px)) rotate(calc(var(--look-x) * 6deg)); transition: transform 380ms var(--ease-out); }
+.dbh-ear-l-look { transform: rotate(calc(var(--look-x) * 4deg)); transition: transform 460ms var(--ease-pop); }
+.dbh-ear-r-look { transform: rotate(calc(var(--look-x) * 4deg)); transition: transform 460ms var(--ease-pop); }
+.db-head.is-looking .dbh-eyes { animation-play-state: paused; }       /* no idle glance while it tracks you */
 
-/* ---------- 3. dragging ---------- */
-.dbm-arm    { transition: transform 300ms var(--ease-pop); }
-.dbm-pupil  { transition: transform 200ms var(--ease-out); }
-.dbm-mouth  { transition: transform 200ms var(--ease-out); }
-.dbm-pouch  { transition: transform 260ms var(--ease-out); }
-.dbm-tile   { opacity: 0; transform: translate(10px, 18px) scale(.6) rotate(-10deg); transition: opacity 140ms ease, transform 160ms cubic-bezier(.4, 0, 1, 1); }
+/* ---------- dragging: alert, wide round eyes, ears up ---------- */
+.dbh-eye-tilt { transition: transform 220ms var(--ease-out); }
+.dbh-eye      { transition: transform 220ms var(--ease-pop); }
+.is-dragging .dbh-eye-tilt-l, .is-dragging .dbh-eye-tilt-r { transform: rotate(0); }
+.is-dragging .dbh-eye { animation: none; transform: scale(.62, 1.85); }          /* 64x26 pill -> ~40x48 */
+.is-dragging .dbh-eyes { animation: none; }
+.is-dragging .dbh-ear-l-look { transform: rotate(calc(var(--look-x) * 4deg - 8deg)); }
+.is-dragging .dbh-ear-r-look { transform: rotate(calc(var(--look-x) * 4deg + 8deg)); }
 
-.db-mascot.is-dragging { --perk: 1; }
-.is-dragging .dbm-arm-right { transform: rotate(-128deg); }
-.is-dragging .dbm-arm-left  { transform: rotate(6deg); }
-.is-dragging .dbm-pupil     { transform: scale(1.57); }                 /* r 7 -> 11 */
-.is-dragging .dbm-mouth     { transform: scale(1.1, 1.22); }
-.is-dragging .dbm-pouch     { transform: rotate(calc(var(--look-x) * -8deg)); }   /* hang toward the drag */
-.is-dragging .dbm-tile      { opacity: 1; transform: none; transition: opacity 160ms ease 120ms, transform 360ms var(--ease-pop) 120ms; }
-.is-dragging .dbm-tile-float { animation: dbm-float 1.2s var(--ease-breath) infinite alternate; }
-@keyframes dbm-float { from { transform: translateY(-4px) rotate(-2deg); } to { transform: translateY(4px) rotate(2deg); } }
-
-/* ---------- 4. dropped (one shot, 900 ms; JS removes the class after 900 ms) ---------- */
-.dbm-smile  { opacity: 0; }
-.dbm-squint { opacity: 0; }
-.dbm-check  { opacity: 0; stroke-dashoffset: 1; }
-
-.is-dropped .dbm-root   { animation: dbm-hop 900ms both; }
-.is-dropped .dbm-eye    { animation: dbm-hide-mid 900ms both; }
-.is-dropped .dbm-squint { animation: dbm-show-mid 900ms both; }
-.is-dropped .dbm-mouth  { animation: dbm-hide-long 900ms both; }
-.is-dropped .dbm-smile  { animation: dbm-show-long 900ms both; }
-.is-dropped .dbm-check  { animation: dbm-check 900ms both; }
-.is-dropped .dbm-pouch-bounce { animation: dbm-pouch 760ms var(--ease-out) both; }
-.is-dropped .dbm-pouch-2 .dbm-pouch-bounce { animation-delay: 40ms; }
-.is-dropped .dbm-pouch-3 .dbm-pouch-bounce { animation-delay: 80ms; }
-.is-dropped .dbm-pouch-4 .dbm-pouch-bounce { animation-delay: 120ms; }
-
-@keyframes dbm-hop {
+/* ---------- dropped: ^ ^ and a hop (800 ms, JS removes the class) ---------- */
+.is-dropped .dbh-root  { animation: dbh-hop 800ms both; }
+.is-dropped .dbh-eye   { animation: dbh-out 800ms both; }
+.is-dropped .dbh-happy { animation: dbh-in 800ms both; }
+@keyframes dbh-hop {
   0%   { transform: translateY(0) scale(1, 1); animation-timing-function: cubic-bezier(.3, 0, .7, 1); }
-  16%  { transform: translateY(4px) scale(1.03, .96); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }   /* anticipation */
-  42%  { transform: translateY(-22px) scale(.98, 1.03); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }  /* apex */
-  64%  { transform: translateY(0) scale(1.03, .97); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }     /* land */
-  80%  { transform: translateY(-3px) scale(1, 1); }
+  15%  { transform: translateY(4px) scale(1.04, .95); animation-timing-function: cubic-bezier(.2, .8, .4, 1); }
+  42%  { transform: translateY(-18px) scale(.98, 1.03); animation-timing-function: cubic-bezier(.5, 0, .8, .4); }
+  64%  { transform: translateY(0) scale(1.03, .97); }
+  82%  { transform: translateY(-2px) scale(1, 1); }
   100% { transform: translateY(0) scale(1, 1); }
 }
-@keyframes dbm-hide-mid  { 0% { opacity: 1; } 8%, 70% { opacity: 0; } 80%, 100% { opacity: 1; } }   /* eyes shut ~560 ms */
-@keyframes dbm-show-mid  { 0% { opacity: 0; } 8%, 70% { opacity: 1; } 80%, 100% { opacity: 0; } }
-@keyframes dbm-hide-long { 0% { opacity: 1; } 8%, 86% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes dbm-show-long { 0% { opacity: 0; transform: scale(.7); } 8% { opacity: 1; transform: scale(1.08); } 20%, 86% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1); } }
-@keyframes dbm-check {
-  0%, 14% { opacity: 1; stroke-dashoffset: 1; transform: scale(.9); }
-  44%     { opacity: 1; stroke-dashoffset: 0; transform: scale(1.06); }
-  56%, 80% { opacity: 1; stroke-dashoffset: 0; transform: scale(1); }
-  100%    { opacity: 0; stroke-dashoffset: 0; transform: scale(1); }
-}
-@keyframes dbm-pouch {
-  0%   { transform: translateY(0) rotate(0); }
-  25%  { transform: translateY(6px) rotate(-4deg); }
-  48%  { transform: translateY(-3px) rotate(3deg); }
-  70%  { transform: translateY(1px) rotate(-1deg); }
-  100% { transform: translateY(0) rotate(0); }
-}
+@keyframes dbh-out { 0% { opacity: 1; } 8%, 78% { opacity: 0; } 90%, 100% { opacity: 1; } }
+@keyframes dbh-in  { 0% { opacity: 0; transform: scale(.7); } 9% { opacity: 1; transform: scale(1.1); } 22%, 78% { opacity: 1; transform: scale(1); } 90%, 100% { opacity: 0; transform: scale(1); } }
 
-/* ---------- off-screen / hidden tab ---------- */
-.db-mascot.is-paused, .db-mascot.is-paused * { animation-play-state: paused !important; }
+.db-head.is-paused, .db-head.is-paused * { animation-play-state: paused !important; }
 
-/* ---------- reduced motion: static pose, no loops, no tweening. States swap instantly. ----------
-   Same rules twice: the media query for real users, .is-reduced to simulate it in preview.html. */
+/* ---------- reduced motion: static neutral pose; states swap instantly ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .db-mascot, .db-mascot * { animation: none !important; transition: none !important; }
-  .db-mascot .dbm-head-look, .db-mascot .dbm-pupil-look, .db-mascot .dbm-ear-look-left, .db-mascot .dbm-ear-look-right, .db-mascot .dbm-pouch { transform: none !important; }
-  .db-mascot.is-dropped .dbm-eye, .db-mascot.is-dropped .dbm-mouth { opacity: 0; }
-  .db-mascot.is-dropped .dbm-squint, .db-mascot.is-dropped .dbm-smile { opacity: 1; }
-  .db-mascot.is-dropped .dbm-check { opacity: 1; stroke-dashoffset: 0; }
+  .db-head, .db-head * { animation: none !important; transition: none !important; }
+  .db-head .dbh-face, .db-head .dbh-look, .db-head .dbh-ear-l-look, .db-head .dbh-ear-r-look { transform: none !important; }
+  .db-head.is-dropped .dbh-eye { opacity: 0; }
+  .db-head.is-dropped .dbh-happy { opacity: 1; }
 }
-.db-mascot.is-reduced, .db-mascot.is-reduced * { animation: none !important; transition: none !important; }
-.db-mascot.is-reduced .dbm-head-look, .db-mascot.is-reduced .dbm-pupil-look, .db-mascot.is-reduced .dbm-ear-look-left, .db-mascot.is-reduced .dbm-ear-look-right, .db-mascot.is-reduced .dbm-pouch { transform: none !important; }
-.db-mascot.is-reduced.is-dropped .dbm-eye, .db-mascot.is-reduced.is-dropped .dbm-mouth { opacity: 0; }
-.db-mascot.is-reduced.is-dropped .dbm-squint, .db-mascot.is-reduced.is-dropped .dbm-smile { opacity: 1; }
-.db-mascot.is-reduced.is-dropped .dbm-check { opacity: 1; stroke-dashoffset: 0; }
+.db-head.is-reduced, .db-head.is-reduced * { animation: none !important; transition: none !important; }
+.db-head.is-reduced .dbh-face, .db-head.is-reduced .dbh-look, .db-head.is-reduced .dbh-ear-l-look, .db-head.is-reduced .dbh-ear-r-look { transform: none !important; }
+.db-head.is-reduced.is-dropped .dbh-eye { opacity: 0; }
+.db-head.is-reduced.is-dropped .dbh-happy { opacity: 1; }
