@@ -180,6 +180,7 @@
       <p class="lead narrow">Point the belt at the folders you already keep. Each client becomes its own collection of colors, fonts and images.</p>
 
       <div class="clients" data-clients>
+        <div class="clients-paint" aria-hidden="true"></div><div class="clients-grain" aria-hidden="true"></div>
         <div class="client-list" role="group" aria-label="Choose a client">
           <button class="client" type="button" data-client="acme" aria-pressed="true">
             <span class="client-badge" style="--who:#2D8CFF" aria-hidden="true">AD</span>
@@ -204,6 +205,7 @@
         </div>
 
         <div class="library">
+          <div class="sc-bar" aria-hidden="true"><i></i><i></i><i></i><span>Library</span></div>
           <div class="library-head">
             <p class="library-title"><span class="client-badge small" style="--who:#2D8CFF" aria-hidden="true" data-badge>AD</span><span data-title>Acme Demo</span></p>
             <div class="tabs" role="group" aria-label="Filter the library">
@@ -218,11 +220,11 @@
             <div class="group" data-group="colors">
               <p class="group-label">Colors</p>
               <div class="swatches" data-swatches>
-                <span class="swatch" style="--c:#2D8CFF" title="#2D8CFF"></span>
-                <span class="swatch" style="--c:#0B1F3A" title="#0B1F3A"></span>
-                <span class="swatch" style="--c:#F5F3EF" title="#F5F3EF"></span>
-                <span class="swatch" style="--c:#FFC400" title="#FFC400"></span>
-                <span class="swatch" style="--c:#F26D6D" title="#F26D6D"></span>
+                <span class="swatch" style="--c:#2D8CFF" title="#2D8CFF" data-hex="#2D8CFF"></span>
+                <span class="swatch" style="--c:#0B1F3A" title="#0B1F3A" data-hex="#0B1F3A"></span>
+                <span class="swatch" style="--c:#F5F3EF" title="#F5F3EF" data-hex="#F5F3EF"></span>
+                <span class="swatch" style="--c:#FFC400" title="#FFC400" data-hex="#FFC400"></span>
+                <span class="swatch" style="--c:#F26D6D" title="#F26D6D" data-hex="#F26D6D"></span>
               </div>
             </div>
 
@@ -338,16 +340,76 @@
       </figure>
 
       <ul class="tools">
-        <li><span class="tool-glyph" aria-hidden="true">Aa</span><div><h3>Font Finder</h3><p>Drag over any text on screen to find the font. Recognition runs on your PC.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">⌕</span><div><h3>QuickFinder</h3><p>Press Ctrl+Space and jump to any file.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">▦</span><div><h3>Library</h3><p>Your clients and their assets, in the folders you already have.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">◉</span><div><h3>Color Picker</h3><p>Pick any pixel on screen as HEX, RGB or HSL.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">⇄</span><div><h3>QuickConverter</h3><p>Convert images in batches to PNG, JPEG or WebP.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">Æ</span><div><h3>FontCoverage</h3><p>Check whether a font covers your text.</p></div></li>
-        <li><span class="tool-glyph" aria-hidden="true">◧</span><div><h3>QuickViewer</h3><p>Preview images, SVG, PDF, fonts, PSD and AI files.</p></div></li>
-        <li class="soon"><span class="tool-glyph" aria-hidden="true">⌖</span><div><h3>OpticAlign <em>Coming soon</em></h3><p>Align icons by how they look, not by their boxes.</p></div></li>
-        <li class="soon"><span class="tool-glyph" aria-hidden="true">∞</span><div><h3>FixedLink <em>Coming soon</em></h3><p>Stable links for the assets you share.</p></div></li>
+        <li class="tool t-font">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-text">Make it <span class="ta-sel">sharper.</span></p>
+            <p class="ta-chip"><b>Sora</b><span>Bold</span><em>Best match</em></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">Aa</span><div><h3>Font Finder</h3><p>Drag over any text on screen to find the font. Recognition runs on your PC.</p></div></div>
+        </li>
+        <li class="tool t-find">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-bar"><kbd>Ctrl</kbd><kbd>Space</kbd><span>logo acme</span></p>
+            <p class="ta-row on"><i style="--c:#2D8CFF"></i>logo-primary.png<em>Acme Demo</em></p>
+            <p class="ta-row"><i style="--c:#FFC400"></i>logo-badge.png<em>Acme Demo</em></p>
+            <p class="ta-row"><i style="--c:#3DD68C"></i>logo-coin.png<em>Lorem Coffee</em></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">⌕</span><div><h3>QuickFinder</h3><p>Press Ctrl+Space and jump to any file.</p></div></div>
+        </li>
+        <li class="tool t-lib">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-client"><b style="--who:#2D8CFF">AD</b>Acme Demo<em>24</em></p>
+            <p class="ta-client"><b style="--who:#3DD68C">LC</b>Lorem Coffee<em>18</em></p>
+            <p class="ta-client"><b style="--who:#8B5CF6">EB</b>Example Bank<em>31</em></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">▦</span><div><h3>Library</h3><p>Your clients and their assets, in the folders you already have.</p></div></div>
+        </li>
+        <li class="tool t-pick">
+          <div class="tool-art" aria-hidden="true">
+            <div class="ta-px"><span></span></div>
+            <p class="ta-hex">#FF8A3D</p>
+            <p class="ta-vals">255, 138, 61</p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">◉</span><div><h3>Color Picker</h3><p>Pick any pixel on screen as HEX, RGB or HSL.</p></div></div>
+        </li>
+        <li class="tool t-conv">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-file"><i style="--c:#f0eee9"></i>logo<b>PNG</b><s>→</s><b class="to">WebP</b></p>
+            <p class="ta-file"><i style="--c:#2D8CFF"></i>symbol<b>PNG</b><s>→</s><b class="to">WebP</b></p>
+            <p class="ta-file"><i style="--c:#FFC400"></i>badge<b>PNG</b><s>→</s><b class="to">WebP</b></p>
+            <p class="ta-prog"><span></span></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">⇄</span><div><h3>QuickConverter</h3><p>Convert images in batches to PNG, JPEG or WebP.</p></div></div>
+        </li>
+        <li class="tool t-cov">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-glyphs"><span>Ç</span><span>ã</span><span>é</span><span>ő</span><span class="no">ž</span><span>ñ</span></p>
+            <p class="ta-legend"><b></b>Covered<b class="no"></b>Missing</p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">Æ</span><div><h3>FontCoverage</h3><p>Check whether a font covers your text.</p></div></div>
+        </li>
+        <li class="tool t-view">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-types"><span style="--c:#31A8FF">PSD</span><span style="--c:#FF9A00">AI</span><span style="--c:#F26D6D">PDF</span><span style="--c:#3DD68C">SVG</span><span style="--c:#8B5CF6">TTF</span></p>
+            <p class="ta-prev"></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">◧</span><div><h3>QuickViewer</h3><p>Preview images, SVG, PDF, fonts, PSD and AI files.</p></div></div>
+        </li>
+        <li class="tool soon t-optic">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-optic"><span class="sq"></span><span class="tri"></span><span class="ci"></span></p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">⌖</span><div><h3>OpticAlign <em>Coming soon</em></h3><p>Align icons by how they look, not by their boxes.</p></div></div>
+        </li>
+        <li class="tool soon t-link">
+          <div class="tool-art" aria-hidden="true">
+            <p class="ta-url"><span>∞</span>belt.link/acme/logo</p>
+            <p class="ta-stable"><b></b>Same link after every update</p>
+          </div>
+          <div class="tool-copy"><span class="tool-glyph" aria-hidden="true">∞</span><div><h3>FixedLink <em>Coming soon</em></h3><p>Stable links for the assets you share.</p></div></div>
+        </li>
       </ul>
+      <p class="note">Illustrations are examples.</p>
     </div>
   </section>
 
