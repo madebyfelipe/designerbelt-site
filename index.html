@@ -287,21 +287,71 @@
     </div>
   </section>
 
-  <!-- 5. Pricing: same promise as the pricing page, no checkout yet. -->
-  <section class="section pricing" id="pricing">
-    <div class="wrap pricing-grid">
-      <div>
-        <h2>One license. Yours to keep.</h2>
-        <p class="price-line"><strong>US$ 5</strong>, one time. Up to 3 devices.</p>
-        <p class="lead narrow">Cloud is optional and sold separately. Price to be announced.</p>
-        <div class="actions">
-          <a class="btn primary" href="/pricing">See pricing</a>
-          <button class="btn ghost" type="button" disabled>Not on sale yet</button>
+  <!-- 5. Pricing: one license card, the same promise as the pricing page, no checkout yet. -->
+  <section class="section pricing" id="pricing" aria-labelledby="license-title">
+    <div class="wrap">
+      <div class="price-wrap">
+        <div class="price-head" aria-hidden="true" style="--look-x:.35;--look-y:.9">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" class="db-head" aria-hidden="true" focusable="false">
+          <!-- Designer's Belt mascot, head only, motion v2 (minimal). Silhouette from the brand cat; no body, mouth or muzzle. -->
+          <g class="dbh-root">
+            <g class="dbh-look">
+              <g class="dbh-float">
+                <g class="dbh-ear-l-look"><g class="dbh-ear dbh-ear-l">
+                  <path d="M76 230 C72 155 88 95 110 52 L192 132 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linejoin="round"/>
+                  <path d="M96 180 C96 140 104 110 114 88 L158 130 Z" fill="#232626"/>
+                </g></g>
+                <g class="dbh-ear-r-look"><g class="dbh-ear dbh-ear-r">
+                  <path d="M324 230 C328 155 312 95 290 52 L208 132 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linejoin="round"/>
+                  <path d="M304 180 C304 140 296 110 286 88 L242 130 Z" fill="#232626"/>
+                </g></g>
+                <path class="dbh-skull" d="M70 280 C65 195 105 130 200 130 C295 130 335 195 330 280 C330 350 270 385 200 385 C130 385 70 350 70 280 Z" fill="#0B0C0C" stroke="#F3F2EF" stroke-width="9" stroke-linejoin="round"/>
+                <g class="dbh-face">
+                  <g class="dbh-eyes">
+                    <g class="dbh-eye-tilt dbh-eye-tilt-l"><rect class="dbh-eye dbh-eye-l" x="117" y="244" width="64" height="26" rx="13" fill="#F3F2EF"/></g>
+                    <g class="dbh-eye-tilt dbh-eye-tilt-r"><rect class="dbh-eye dbh-eye-r" x="219" y="244" width="64" height="26" rx="13" fill="#F3F2EF"/></g>
+                    <g class="dbh-happy" fill="none" stroke="#F3F2EF" stroke-width="10" stroke-linecap="round">
+                      <path d="M125 268 Q149 238 173 268"/><path d="M227 268 Q251 238 275 268"/>
+                    </g>
+                  </g>
+                  <path class="dbh-nose" d="M190 304 L210 304 L200 316 Z" fill="#F3F2EF"/>
+                </g>
+              </g>
+            </g>
+          </g>
+          </svg>
+        </div>
+        <div class="price-card">
+          <div class="price-paint" aria-hidden="true"></div>
+          <div class="price-grain" aria-hidden="true"></div>
+          <div class="price-left">
+            <h2 class="price-eyebrow" id="license-title">Designer's Belt license</h2>
+            <p class="price-amount"><b>US$ 5</b><span>one time</span></p>
+            <p class="price-devices"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Up to 3 devices</p>
+            <p class="price-status"><i aria-hidden="true"></i>Not on sale yet</p>
+            <a class="btn primary price-cta" href="/pricing" data-price-cta>See pricing <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="price-right">
+            <h3>On the belt today</h3>
+            <ul class="price-tools">
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Font Finder</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>QuickFinder</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Library</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Color Picker</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>QuickConverter</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>FontCoverage</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>QuickViewer</li>
+            </ul>
+            <h3>Coming soon</h3>
+            <ul class="price-soon">
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg>OpticAlign</li>
+              <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg>FixedLink</li>
+            </ul>
+            <p class="price-cloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9a4.5 4.5 0 0 1 0 9z"/></svg><span><b>Cloud, optional</b> Sold separately. Price to be announced.</span></p>
+          </div>
         </div>
       </div>
-      <div class="pricing-mascot" aria-hidden="true">
-        <img src="/mascot-head.svg" alt="" width="300" height="285">
-      </div>
+      <p class="note">Illustrations, not captures.</p>
     </div>
   </section>
 

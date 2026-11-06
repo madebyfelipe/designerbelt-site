@@ -138,6 +138,24 @@
   sectionButtons.forEach(function (b) { b.addEventListener('click', function () { chooseClient(b.getAttribute('data-client')); }); });
   libAvatars.forEach(function (b) { b.addEventListener('click', function () { chooseClient(b.getAttribute('data-lib-client')); }); });
 
+  /* ------------------------------------------------------------------ price card */
+  // The head peeks over the card and looks at the price (its --look-x / --look-y come from
+  // the markup); it goes happy for a moment when the button is hovered or focused.
+  var priceCta = document.querySelector('[data-price-cta]');
+  var priceHead = document.querySelector('.price-head .db-head');
+  if (priceCta && priceHead) {
+    var happyT = 0;
+    var happy = function () {
+      clearTimeout(happyT);
+      priceHead.classList.remove('is-dropped');
+      void priceHead.getBoundingClientRect();
+      priceHead.classList.add('is-dropped');
+      happyT = setTimeout(function () { priceHead.classList.remove('is-dropped'); }, 900);
+    };
+    priceCta.addEventListener('pointerenter', happy);
+    priceCta.addEventListener('focus', happy);
+  }
+
   [].slice.call(document.querySelectorAll('[data-filter]')).forEach(function (tab) {
     tab.addEventListener('click', function () {
       var wanted = tab.getAttribute('data-filter');
