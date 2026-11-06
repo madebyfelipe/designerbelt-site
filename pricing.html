@@ -39,8 +39,15 @@
             <li>Up to 3 devices per license</li>
             <li>Local tools process your files on your PC</li>
           </ul>
-          <button class="btn" type="button" disabled aria-describedby="license-note">Not on sale yet</button>
-          <p class="btn-note" id="license-note">Checkout is not open. This page will link to it when the license goes on sale.</p>
+          <div data-sale-off>
+            <button class="btn" type="button" disabled aria-describedby="license-note">Not on sale yet</button>
+            <p class="btn-note" id="license-note">Checkout is not open. This page will link to it when the license goes on sale.</p>
+          </div>
+          <div data-sale-on hidden>
+            <button class="btn buy" type="button" data-buy>Buy license, US$ 5</button>
+            <p class="btn-note" data-buy-note>Paid once through Paddle. Your license key is shown right after payment.</p>
+          </div>
+          <p class="btn-note" role="status" data-buy-status></p>
         </article>
         <article class="plan" aria-labelledby="plan-cloud">
           <div class="plan-head">
@@ -62,5 +69,6 @@
   <span>© 2026 Designer's Belt. Operated by Dazz Soluções de Marketing.</span>
   <nav aria-label="Legal"><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a></nav>
 </footer>
+<script src="/checkout.js" defer></script>
 </body>
 </html>

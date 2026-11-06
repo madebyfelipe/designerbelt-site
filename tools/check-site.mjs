@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const allowDrafts = process.argv.includes('--allow-drafts');
-const pages = { pricing: 'pricing.html', terms: 'terms.html', privacy: 'privacy.html', refunds: 'refunds.html' };
+const pages = { pricing: 'pricing.html', terms: 'terms.html', privacy: 'privacy.html', refunds: 'refunds.html', success: 'success.html' };
 const read = (f) => readFileSync(join(root, f), 'utf8');
 const errors = [];
 const fail = (m) => errors.push(m);
@@ -36,9 +36,13 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
   if (slug !== 'index') {
     if ((html.match(/<h1[ >]/g) || []).length !== 1) fail(`${file}: needs exactly one h1`);
     if (!/<main id="content">/.test(html) || !/class="skip" href="#content"/.test(html)) fail(`${file}: missing main/skip link`);
-    if (!html.includes(`href="/${slug}" aria-current="page"`)) fail(`${file}: current page not marked in nav`);
+    if (slug !== 'success' && !html.includes(`href="/${slug}" aria-current="page"`)) fail(`${file}: current page not marked in nav`);
     for (const l of ['/pricing', '/privacy', '/terms', '/refunds']) if (!html.includes(`href="${l}"`)) fail(`${file}: missing link ${l}`);
-    if (/<script/i.test(html)) fail(`${file}: pages must not load scripts`);
+    // only the checkout glue, only where a purchase starts or ends; no inline script, nothing remote
+    const scripts = [...html.matchAll(/<script[^>]*>/g)].map((m) => m[0]);
+    const wantsCheckout = slug === 'pricing' || slug === 'success';
+    if (wantsCheckout ? scripts.length !== 1 || !/src="\/checkout\.js"/.test(scripts[0]) : scripts.length) fail(`${file}: unexpected scripts ${scripts.join(' ')}`);
+    if (/<script(?![^>]*src=)/i.test(html)) fail(`${file}: no inline scripts`);
     if (!allowDrafts && /\[\[[A-Z_]+\]\]/.test(html)) fail(`${file}: unresolved marker ${html.match(/\[\[[A-Z_]+\]\]/)[0]} (publish gate)`);
   }
   // claims that the app does not back: the Color Picker has HEX, RGB and HSL only
@@ -91,10 +95,27 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
 const pricing = read('pricing.html');
 if (!/<strong>\$5<\/strong>\s*<span>one time<\/span>/.test(pricing)) fail('pricing.html: $5 one time not shown');
 if (!/Up to 3 devices per license/.test(pricing)) fail('pricing.html: 3-device limit not shown');
-if (/<a[^>]*>\s*Buy/i.test(pricing) || /href="https?:\/\/[^"]*(paddle|checkout)/i.test(pricing)) fail('pricing.html: checkout link exists but checkout does not');
-if (!/<button class="btn" type="button" disabled[^>]*>Not on sale yet/.test(pricing)) fail('pricing.html: license button must be disabled');
 if (!/Price to be announced/.test(pricing)) fail('pricing.html: Cloud price must stay "to be announced"');
-for (const banned of ['Cancel anytime', 'within the same major version', 'reply within', '\\$3', '\\$4']) if (new RegExp(banned, 'i').test(pricing + read('refunds.html'))) fail(`unapproved claim present: ${banned}`);
+for (const banned of ['Cancel anytime', 'within the same major version', 'reply within', '\$3', '\$4']) if (new RegExp(banned, 'i').test(pricing + read('refunds.html'))) fail(`unapproved claim present: ${banned}`);
+
+// Checkout only exists behind the server flag: the page ships "Not on sale yet", the buy button is hidden, and no
+// Paddle request or link exists until /api/checkout-config says enabled.
+if (!/<div data-sale-off>\s*<button class="btn" type="button" disabled[^>]*>Not on sale yet<\/button>/.test(pricing)) fail('pricing.html: the default state must be the disabled "Not on sale yet" button');
+if (!/<div data-sale-on hidden>[\s\S]*?data-buy[\s\S]*?<\/div>/.test(pricing)) fail('pricing.html: the buy button must sit in a hidden container');
+if ((pricing.match(/data-buy(?![-\w])/g) || []).length !== 1) fail('pricing.html: exactly one buy button expected');
+if (/href="https?:\/\/[^"]*(paddle|checkout)/i.test(pricing) || /<a[^>]*>\s*Buy/i.test(pricing) || /paddle\.js|cdn\.paddle/i.test(pricing)) fail('pricing.html: checkout must not be linked or loaded from the HTML');
+const glue = read('checkout.js');
+if (glue.indexOf('config.enabled') < 0 || glue.indexOf('config.enabled') > glue.indexOf('cdn.paddle.com')) fail('checkout.js: Paddle.js must load only after the config says enabled');
+if ([...glue.matchAll(/https?:\/\/[^'"`\s)]+/g)].some((m) => !m[0].startsWith('https://cdn.paddle.com/paddle/v2/paddle.js'))) fail('checkout.js: unexpected remote URL');
+if (/(live|test)_[a-z0-9]{20,}/i.test(glue)) fail('checkout.js: a Paddle token is hardcoded; it must come from /api/checkout-config');
+for (const f of ['api/activate.mjs', 'api/deactivate.mjs', 'api/license.mjs', 'api/paddle-webhook.mjs', 'api/checkout-config.mjs', 'api/_lib/core.mjs', 'api/_lib/store.mjs', 'api/_lib/ctx.mjs']) if (!existsSync(join(root, f))) fail(`${f} is missing`);
+const ignore = read('.vercelignore');
+for (const d of ['tools', 'tests']) if (!new RegExp(`^${d}[ ]*$`, 'm').test(ignore)) fail(`.vercelignore must exclude ${d}`);
+// no secrets in the repo: webhook secrets, API keys, private keys
+for (const f of ['checkout.js', 'pricing.html', 'success.html', 'README.md', ...['activate', 'deactivate', 'license', 'paddle-webhook', 'checkout-config'].map((n) => `api/${n}.mjs`), 'api/_lib/core.mjs', 'api/_lib/store.mjs', 'api/_lib/ctx.mjs', 'vercel.json', 'package.json']) {
+  const t = read(f);
+  if (/pdl_(live|sdbx)_(apikey|ntfset)_\w+/i.test(t) || /-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(t)) fail(`${f}: contains a secret`);
+}
 
 if (errors.length) { console.error(errors.map((e) => 'FAIL ' + e).join('\n')); process.exit(1); }
-console.log(`OK${allowDrafts ? ' (drafts allowed)' : ''}: ${Object.keys(pages).length} pages + landing`);
+console.log(`OK${allowDrafts ? ' (drafts allowed)' : ''}: ${Object.keys(pages).length} pages + landing + checkout gate`);
