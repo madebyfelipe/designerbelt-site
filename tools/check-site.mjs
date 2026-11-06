@@ -78,6 +78,11 @@ for (const [slug, file] of Object.entries({ index: 'index.html', ...pages })) {
     if (!/data-lib-client/.test(html) || !/data-lib-title/.test(html)) fail('index.html: the Library client switcher is missing');
     if (/adobe|photoshop|\bps\b/i.test(html)) fail('index.html: no Adobe/Photoshop name or mark may appear');
     if (!/id="drag"/.test(html)) fail('index.html: the drag demo is missing');
+    // the tools showcase (card 4 of the cards series): copy plus the three drawn windows
+    if (!/data-showcase/.test(html)) fail('index.html: the tools showcase card is missing');
+    if (!/Pick, convert and preview/.test(text)) fail('index.html: the tools showcase lost its title');
+    if ((html.match(/class="sc-win/g) || []).length !== 3) fail('index.html: the tools showcase needs its three windows');
+    if (!/sc-pick/.test(html) || !/sc-conv/.test(html) || !/sc-view/.test(html)) fail('index.html: a tools showcase window is missing');
     if (!/data-clients/.test(html)) fail('index.html: the client library is missing');
     if (/Coming soon/.test(text) === false) fail('index.html: OpticAlign/FixedLink must be marked coming soon');
   }
