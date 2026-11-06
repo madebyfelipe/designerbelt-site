@@ -16,6 +16,10 @@ async function setupBuy(button) {
     token: config.token,
     eventCallback: (e) => {
       if (e.name === 'checkout.completed' && e.data?.transaction_id) {
+        const hash = e.data.custom_data?.claim_hash;
+        const claim = hash && sessionStorage.getItem('belt:pending:' + hash);
+        if (!claim) { say(status, 'Purchase claim unavailable. Keep your Paddle receipt and contact support.'); return; }
+        sessionStorage.setItem('belt:claim:' + e.data.transaction_id, claim);
         Paddle.Checkout.close();
         location.assign('/success?txn=' + encodeURIComponent(e.data.transaction_id));
       }
@@ -23,7 +27,17 @@ async function setupBuy(button) {
   });
   $('[data-sale-off]').hidden = true;
   $('[data-sale-on]').hidden = false;
-  button.addEventListener('click', () => Paddle.Checkout.open({ items: [{ priceId: config.priceId, quantity: 1 }], settings: { displayMode: 'overlay', variant: 'one-page' } }));
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    try {
+      const claim = Array.from(crypto.getRandomValues(new Uint8Array(32)), (n) => n.toString(16).padStart(2, '0')).join('');
+      const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(claim))), (n) => n.toString(16).padStart(2, '0')).join('');
+      // Save before opening: an unavailable session store must never lead to a paid but unclaimable checkout.
+      sessionStorage.setItem('belt:pending:' + hash, claim);
+      Paddle.Checkout.open({ items: [{ priceId: config.priceId, quantity: 1 }], customData: { claim_hash: hash }, settings: { displayMode: 'overlay', variant: 'one-page' } });
+    } catch { say(status, 'Checkout could not start. Allow session storage and reload to try again.'); }
+    finally { button.disabled = false; }
+  });
 }
 
 async function showLicense(box) {
@@ -33,9 +47,12 @@ async function showLicense(box) {
   const done = box.querySelector('[data-ready]');
   const download = box.querySelector('[data-download]');
   if (!/^txn_[a-z0-9]{20,40}$/.test(txn)) { say(status, 'There is no purchase to show here. Your license key was shown after payment.'); return; }
+  let claim;
+  try { claim = sessionStorage.getItem('belt:claim:' + txn); } catch { /* unavailable session store fails closed below */ }
+  if (!claim) { say(status, 'Purchase claim unavailable in this browser. Keep your Paddle receipt and contact support.'); return; }
   for (let attempt = 0; attempt < 30; attempt++) {
     let res, body;
-    try { res = await fetch('/api/license?txn=' + encodeURIComponent(txn), { cache: 'no-store' }); body = await res.json(); } catch { say(status, 'Could not reach the license service. Reload to try again.'); return; }
+    try { res = await fetch('/api/license?txn=' + encodeURIComponent(txn), { cache: 'no-store', headers: { authorization: 'Bearer ' + claim } }); body = await res.json(); } catch { say(status, 'Could not reach the license service. Reload to try again.'); return; }
     if (res.status === 202) { say(status, 'Confirming your payment…'); await new Promise((r) => setTimeout(r, 2000)); continue; }
     if (!res.ok) { say(status, body.message ?? 'Something went wrong. Reload to try again.'); return; }
     if (body.status === 'revoked') { say(status, 'This purchase was refunded, so its license is no longer valid.'); return; }

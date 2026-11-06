@@ -58,13 +58,14 @@ export async function activate(request, ctx) {
   if (!MACHINE_RE.test(body.machine ?? '')) return err(400, 'invalid_machine', 'Missing device identifier.');
   const label = String(body.label ?? '').replace(/[\u0000-\u001f]/g, '').trim().slice(0, 64) || 'Windows PC';
   if (!(await ctx.store.hit(`act:${clientIp(request)}`, 30, 3600)) || !(await ctx.store.hit(`actkey:${keyId(key)}`, 60, 3600))) return err(429, 'rate_limited', 'Too many attempts. Try again later.');
-  const license = await ctx.store.license(key);
-  if (!license) return err(404, 'unknown_key', 'This license key was not found.');
-  if (license.revoked) return err(403, 'revoked', 'This license was refunded or cancelled and can no longer be activated.');
-  const now = ctx.now();
+    const now = ctx.now();
   const result = await ctx.store.activate(key, body.machine, label, randomUUID(), now, MAX_DEVICES);
+  if (result.error) return err(result.error === 'revoked' ? 403 : 404, result.error, 'License is unavailable or revoked.');
   if (!result.ok) return err(409, 'limit_reached', `This license is already active on ${MAX_DEVICES} devices. Remove one of them, then try again.`, { limit: MAX_DEVICES, devices: result.devices.map((d) => ({ id: d.id, label: d.label, activatedAt: d.at })) });
   const signed = signReceipt({ v: 1, product: 'designers-belt', k: keyId(key), activation: result.activation.id, machine: body.machine, issued: Math.floor(now / 1000), limit: MAX_DEVICES }, ctx.env.LICENSE_SIGNING_KEY);
+  const current = await ctx.store.license(key);
+  if (!current || current.revoked) return err(403, 'revoked', 'This license was revoked during activation.');
+  if (!Object.values(current.devices ?? {}).some((d) => d.id === result.activation.id)) return err(409, 'activation_changed', 'Activation changed. Try again.');
   return json(200, { activation: result.activation.id, renewed: result.renewed, ...signed });
 }
 
@@ -78,15 +79,17 @@ export async function deactivate(request, ctx) {
   return (await ctx.store.deactivate(key, body.activation)) ? new Response(null, { status: 204 }) : err(404, 'unknown_activation', 'That device is not activated for this license.');
 }
 
-// Success page: the buyer's browser knows the transaction id from Paddle.js; the webhook has (or has not yet) created the key.
+// The transaction ID is not authorization. Only the browser holding the checkout claim can reveal its key.
 export async function licenseForTxn(request, ctx) {
   const off = notReady(ctx); if (off) return off;
   const txn = new URL(request.url).searchParams.get('txn') ?? '';
   if (!TXN_RE.test(txn)) return err(400, 'invalid_transaction', 'Missing or invalid transaction id.');
   if (!(await ctx.store.hit(`lookup:${clientIp(request)}`, 120, 3600))) return err(429, 'rate_limited', 'Too many attempts. Try again later.');
-  const key = await ctx.store.keyForTxn(txn);
-  const license = key && (await ctx.store.license(key));
-  if (!license) return json(202, { status: 'pending' });
+  const claim = request.headers.get('authorization')?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
+  if (!claim) return err(403, 'unauthorized', 'Purchase claim required.');
+  const license = await ctx.store.lookup(txn);
+  if (license?.key && (!/^[a-f0-9]{64}$/.test(license.claimHash ?? '') || !timingSafeEqual(Buffer.from(license.claimHash, 'hex'), createHash('sha256').update(claim).digest()))) return err(403, 'unauthorized', 'Purchase claim does not match.');
+  if (!license?.key) return json(202, { status: 'pending' });
   if (license.revoked) return json(200, { status: 'revoked' });
   if (ctx.now() - license.createdAt > REVEAL_WINDOW_MS) return json(200, { status: 'expired', message: 'For security the key is only shown for 7 days after purchase. Use the key from your purchase.' });
   return json(200, { status: 'ready', key: license.key, downloadUrl: ctx.env.DOWNLOAD_URL || null });
@@ -104,10 +107,14 @@ export async function paddleWebhook(request, ctx) {
   if (type === 'transaction.completed') {
     const bought = (data.items ?? []).some((i) => priceIds(ctx.env).includes(i?.price?.id ?? i?.price_id));
     if (!bought || data.status !== 'completed' || typeof data.id !== 'string') return json(200, { ignored: true });
-    const { created } = await ctx.store.createForTxn(data.id, generateKey(), ctx.now());
+    const claimHash = data.custom_data?.claim_hash;
+    if (!TXN_RE.test(data.id) || !/^[a-f0-9]{64}$/.test(claimHash ?? '')) return err(400, 'missing_claim', 'Checkout claim is missing.');
+    const { created, error } = await ctx.store.createForTxn(data.id, generateKey(), ctx.now(), claimHash);
+    if (error) return err(503, error, 'License issuance must be retried.');
     return json(200, { ok: true, created });
   }
   if ((type === 'adjustment.created' || type === 'adjustment.updated') && data.status === 'approved' && ['refund', 'chargeback'].includes(data.action) && (data.action === 'chargeback' || data.type !== 'partial')) {
+    if (!TXN_RE.test(data.transaction_id ?? '')) return err(400, 'invalid_transaction', 'Invalid transaction.');
     const revoked = await ctx.store.revokeTxn(data.transaction_id, data.action, ctx.now());
     return json(200, { ok: true, revoked });
   }

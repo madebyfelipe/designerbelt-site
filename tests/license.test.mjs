@@ -1,13 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createHmac, generateKeyPairSync, verify } from 'node:crypto';
+import { createHash, createHmac, generateKeyPairSync, verify } from 'node:crypto';
 import { activate, checkoutConfig, deactivate, generateKey, keyId, licenseForTxn, normalizeKey, paddleWebhook, verifyPaddleSignature } from '../api/_lib/core.mjs';
-import { memoryStore, redisFromEnv } from '../api/_lib/store.mjs';
+import { memoryStore, memoryCommands, redisStore, STATE_SCRIPT, redisFromEnv } from '../api/_lib/store.mjs';
 
 const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
 const SECRET = 'pdl_ntfset_test_secret';
 const PRICE = 'pri_01m6s00sy0fb1s86f2nfkhgphp';
 const TXN = 'txn_01k9ppwf885xk7azx0xgnp6kp1';
+const CLAIM = 'a'.repeat(64);
+const CLAIM_HASH = createHash('sha256').update(CLAIM).digest('hex');
 const T0 = Date.UTC(2026, 10, 7, 12, 0, 0);
 const machine = (n) => n.toString(16).padStart(32, 'a'); // 32 hex chars, distinct per n
 
@@ -22,9 +24,9 @@ function setup(overrides = {}) {
 const post = (body, headers = {}) => new Request('https://x.test/api', { method: 'POST', headers: { 'x-forwarded-for': '1.2.3.4', ...headers }, body: typeof body === 'string' ? body : JSON.stringify(body) });
 const sign = (raw, ts, secret = SECRET) => `ts=${ts};h1=${createHmac('sha256', secret).update(`${ts}:${raw}`).digest('hex')}`;
 const hook = (ctx, event, { ts = Math.floor(ctx.now() / 1000), secret = SECRET } = {}) => { const raw = JSON.stringify(event); return paddleWebhook(post(raw, { 'paddle-signature': sign(raw, ts, secret) }), ctx); };
-const completed = (id = TXN, price = PRICE) => ({ event_type: 'transaction.completed', data: { id, status: 'completed', items: [{ price: { id: price } }] } });
+const completed = (id = TXN, price = PRICE) => ({ event_type: 'transaction.completed', data: { id, status: 'completed', custom_data: { claim_hash: CLAIM_HASH }, items: [{ price: { id: price } }] } });
 const refund = (over = {}) => ({ event_type: 'adjustment.updated', data: { id: 'adj_1', transaction_id: TXN, action: 'refund', status: 'approved', type: 'full', ...over } });
-const lookup = (ctx, txn = TXN) => licenseForTxn(new Request(`https://x.test/api/license?txn=${txn}`, { headers: { 'x-forwarded-for': '9.9.9.9' } }), ctx);
+const lookup = (ctx, txn = TXN) => licenseForTxn(new Request(`https://x.test/api/license?txn=${txn}`, { headers: { 'x-forwarded-for': '9.9.9.9', authorization: 'Bearer ' + CLAIM } }), ctx);
 async function bought(ctx) { await hook(ctx, completed()); return (await (await lookup(ctx)).json()).key; }
 const act = (ctx, key, n, extra = {}) => activate(post({ key, machine: machine(n), label: `PC ${n}`, ...extra }), ctx);
 
@@ -179,12 +181,71 @@ test('checkout config: off unless the flag AND the whole backend are present', a
 test('storage from env: Upstash REST names and the Vercel Marketplace names both work, none means no store', async () => {
   assert.equal(redisFromEnv({}), null);
   const calls = [];
-  const fake = async (url, init) => { calls.push({ url, auth: init.headers.authorization, body: JSON.parse(init.body) }); return new Response(JSON.stringify({ result: 'OK' })); };
+  const fake = async (url, init) => { calls.push({ url, auth: init.headers.authorization, body: JSON.parse(init.body) }); return new Response(JSON.stringify({ result: JSON.stringify({ created: true }) })); };
   for (const env of [{ UPSTASH_REDIS_REST_URL: 'https://r.test', UPSTASH_REDIS_REST_TOKEN: 't1' }, { KV_REST_API_URL: 'https://r.test', KV_REST_API_TOKEN: 't1' }]) {
     const store = redisFromEnv(env, fake);
     assert.equal((await store.createForTxn('txn_a', 'K', 1)).created, true);
   }
-  assert.deepEqual(calls[0], { url: 'https://r.test', auth: 'Bearer t1', body: ['SET', 'txn:txn_a', 'K', 'NX'] });
+  assert.deepEqual(calls[0], { url: 'https://r.test', auth: 'Bearer t1', body: ['EVAL', STATE_SCRIPT, '1', '{belt-licenses}:v2', 'create', 'txn_a', 'K', '1', 'undefined'] });
   const failing = redisFromEnv({ KV_REST_API_URL: 'https://r.test', KV_REST_API_TOKEN: 't' }, async () => new Response(JSON.stringify({ error: 'boom' }), { status: 500 }));
   await assert.rejects(failing.license('K'));
+});
+
+
+test('key delivery requires the independent checkout claim, not just the transaction ID', async () => {
+  const { ctx } = setup(); await bought(ctx);
+  const url = `https://x.test/api/license?txn=${TXN}`;
+  for (const authorization of ['', 'Bearer ' + 'b'.repeat(64), 'Bearer bad']) {
+    const res = await licenseForTxn(new Request(url, { headers: { authorization } }), ctx);
+    assert.equal(res.status, 403); assert.equal((await res.json()).key, undefined);
+  }
+  assert.equal((await lookup(ctx)).status, 200);
+});
+
+test('refund before completed and completion replays never resurrect a license', async () => {
+  const { ctx } = setup(); await hook(ctx, refund());
+  await Promise.all(Array.from({ length: 12 }, () => hook(ctx, completed())));
+  const record = await ctx.store.lookup(TXN);
+  assert.equal(record.revoked, true);
+  assert.equal((await (await lookup(ctx)).json()).status, 'revoked');
+  assert.equal((await act(ctx, record.key, 1)).status, 403);
+});
+
+test('lost Redis reply retries the atomic issuance without creating a second license', async () => {
+  const cmd = memoryCommands(); let lose = true;
+  const store = redisStore(async (...a) => { const result = await cmd(...a); if (lose) { lose = false; throw new Error('lost reply'); } return result; });
+  await assert.rejects(store.createForTxn(TXN, 'first', T0, CLAIM_HASH));
+  const retried = await store.createForTxn(TXN, 'second', T0, CLAIM_HASH);
+  assert.deepEqual(retried, { key: 'first', created: false });
+  assert.equal((await store.lookup(TXN)).key, 'first');
+  assert.equal(await store.license('second'), null);
+});
+
+test('activation checks revocation in the same atomic operation, including same-device renewal', async () => {
+  const { ctx } = setup(); const key = await bought(ctx);
+  await Promise.all([act(ctx, key, 1), act(ctx, key, 2), hook(ctx, refund()), act(ctx, key, 3), hook(ctx, completed())]);
+  const record = await ctx.store.license(key);
+  assert.equal(record.revoked, true); assert.deepEqual(record.devices, {});
+  for (const n of [1, 2, 3, 4]) assert.equal((await act(ctx, key, n)).status, 403);
+  await hook(ctx, completed()); assert.equal((await act(ctx, key, 1)).status, 403);
+});
+
+test('concurrent completion emits exactly one key, and exactly three distinct machines fit', async () => {
+  const { ctx } = setup();
+  const results = await Promise.all(Array.from({ length: 12 }, () => hook(ctx, completed())));
+  assert.equal((await Promise.all(results.map(r => r.json()))).filter(r => r.created).length, 1);
+  const key = (await ctx.store.lookup(TXN)).key;
+  const results2 = await Promise.all(Array.from({ length: 12 }, (_, i) => act(ctx, key, i)));
+  assert.equal(results2.filter(r => r.status === 200).length, 3);
+  assert.equal((await ctx.store.devices(key)).length, 3);
+});
+
+
+test('revocation while an activation reply is delayed cannot return a renewed receipt', async () => {
+  const { ctx } = setup(); const key = await bought(ctx);
+  const original = ctx.store.activate;
+  ctx.store.activate = async (...args) => { const result = await original(...args); await ctx.store.revokeTxn(TXN, 'refund', ctx.now()); return result; };
+  const response = await act(ctx, key, 1);
+  assert.equal(response.status, 403); assert.equal((await response.json()).receipt, undefined);
+  assert.equal((await ctx.store.license(key)).revoked, true);
 });
