@@ -84,11 +84,11 @@ expect((await Promise.all([1, 2, 3].map(act))).every((r) => r.status === 200), '
 expect((await act(4)).status === 409, 'the fourth device must be refused');
 await webhook(app.url, { event_type: 'adjustment.updated', data: { transaction_id: TXN, action: 'refund', status: 'approved', type: 'full' } });
 expect((await act(1)).status === 403, 'after a refund the key must stop activating');
-await go(app.url + `/success?txn=${TXN}`); await sleep(1200);
+await go(app.url + `/success?txn=${TXN}`); await waitFor('document.querySelector("[data-state]").textContent.includes("refunded")', 8000);
 expect((await evalIn('document.querySelector("[data-state]").textContent')).includes('refunded'), 'success page: a refunded purchase must say so');
 
 // 4. success page edge cases and layout
-await go(app.url + '/success'); await sleep(500);
+await go(app.url + '/success'); await waitFor('document.querySelector("[data-state]").textContent.includes("no purchase")', 5000);
 expect((await evalIn('document.querySelector("[data-state]").textContent')).includes('no purchase'), 'success page without a txn must not poll or show anything');
 await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 900, deviceScaleFactor: 1, mobile: true });
 for (const p of ['/pricing', `/success?txn=${TXN}`]) { await go(app.url + p); await sleep(800); expect((await evalIn('document.documentElement.scrollWidth')) <= 390, `${p}: horizontal overflow at 390 px`); }
