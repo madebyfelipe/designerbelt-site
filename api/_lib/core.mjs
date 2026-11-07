@@ -113,7 +113,7 @@ export async function paddleWebhook(request, ctx) {
     if (error) return err(503, error, 'License issuance must be retried.');
     return json(200, { ok: true, created });
   }
-  if ((type === 'adjustment.created' || type === 'adjustment.updated') && data.status === 'approved' && ['refund', 'chargeback'].includes(data.action) && (data.action === 'chargeback' || data.type !== 'partial')) {
+  if ((type === 'adjustment.created' || type === 'adjustment.updated') && data.status === 'approved' && ['refund', 'chargeback'].includes(data.action) && (data.action === 'chargeback' || data.type !== 'partial' || (data.items?.length > 0 && data.items.every((i) => i?.type === 'full')))) {
     if (!TXN_RE.test(data.transaction_id ?? '')) return err(400, 'invalid_transaction', 'Invalid transaction.');
     const revoked = await ctx.store.revokeTxn(data.transaction_id, data.action, ctx.now());
     return json(200, { ok: true, revoked });

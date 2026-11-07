@@ -125,11 +125,12 @@ test('refund or chargeback revokes: activation refused, lookup says revoked; par
   const { ctx } = setup();
   const key = await bought(ctx);
   assert.equal((await act(ctx, key, 1)).status, 200);
-  await hook(ctx, refund({ type: 'partial' }));
+  await hook(ctx, refund({ type: 'partial', items: [{ type: 'partial', amount: '100' }] }));
   await hook(ctx, refund({ status: 'pending_approval' }));
   await hook(ctx, refund({ action: 'credit' }));
   assert.equal((await act(ctx, key, 1)).status, 200);
-  assert.equal((await (await hook(ctx, refund())).json()).revoked, true);
+  // the Paddle dashboard sends a whole-amount refund as type partial whose items are all type full
+  assert.equal((await (await hook(ctx, refund({ type: 'partial', items: [{ type: 'full', amount: '500' }] }))).json()).revoked, true);
   const res = await act(ctx, key, 1);
   assert.equal(res.status, 403); assert.equal((await res.json()).error, 'revoked');
   assert.equal((await (await lookup(ctx)).json()).status, 'revoked');
